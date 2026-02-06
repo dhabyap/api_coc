@@ -4,27 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Services\CocPlayerService;
 use App\Services\PlayerInsightService;
+use App\Services\GlobalStatsService;
 use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
     protected CocPlayerService $playerService;
     protected PlayerInsightService $insightService;
+    protected GlobalStatsService $globalStatsService;
 
     public function __construct(
         CocPlayerService $playerService,
-        PlayerInsightService $insightService
+        PlayerInsightService $insightService,
+        GlobalStatsService $globalStatsService
     ) {
         $this->playerService = $playerService;
         $this->insightService = $insightService;
+        $this->globalStatsService = $globalStatsService;
     }
 
     /**
-     * Show the homepage.
+     * Show the homepage with global stats.
      */
     public function home()
     {
-        return view('home');
+        $globalStats = $this->globalStatsService->getGlobalStats();
+        return view('home', ['globalStats' => $globalStats]);
     }
 
     /**

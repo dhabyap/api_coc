@@ -4,8 +4,22 @@ namespace App\Services;
 
 class PlayerInsightService
 {
+    protected WarReadinessService $warService;
+    protected UpgradePriorityService $priorityService;
+    protected StrategyRecommendationService $strategyService;
+
+    public function __construct(
+        WarReadinessService $warService,
+        UpgradePriorityService $priorityService,
+        StrategyRecommendationService $strategyService
+    ) {
+        $this->warService = $warService;
+        $this->priorityService = $priorityService;
+        $this->strategyService = $strategyService;
+    }
+
     /**
-     * Build all insights for a player in Bahasa Indonesia.
+     * Build all insights for a player by coordinating specialized services.
      */
     public function getAllInsights(array $player): array
     {
@@ -18,18 +32,32 @@ class PlayerInsightService
         $rushStatus = $this->detectRushStatus($player, $heroData, $troopData);
         $heroOrder = $this->calculateHeroUpgradeOrder($player['heroes'] ?? []);
         $clanContribution = $this->analyzeClanContribution($player);
-        $warReadiness = $this->calculateWarReadiness($player, $heroData, $troopData);
+
+        // Advanced Services
+        $warReadiness = $this->warService->calculateStatus($player, $heroData, $troopData);
+        $strategy = $this->strategyService->getRecommendations($player, $this->buildInsightContext($heroData, $troopData, $spellData, $heroOrder));
 
         return [
             'health' => $health,
             'rush' => $rushStatus,
             'heroOrder' => $heroOrder,
             'clan' => $clanContribution,
-            'warReadiness' => $warReadiness,
+            'warReadiness' => $warReadiness, // From WarReadinessService
+            'strategy' => $strategy,       // From StrategyRecommendationService
             'troops' => $troopData,
             'spells' => $spellData,
             'heroes' => $heroData,
             'equipment' => $equipmentData,
+        ];
+    }
+
+    private function buildInsightContext($heroes, $troops, $spells, $heroOrder): array
+    {
+        return [
+            'heroes' => $heroes,
+            'troops' => $troops,
+            'spells' => $spells,
+            'heroOrder' => $heroOrder
         ];
     }
 
@@ -50,9 +78,6 @@ class PlayerInsightService
         return [
             'score' => round($totalScore),
             'status' => $status,
-            'heroWeight' => round($heroScore),
-            'troopWeight' => round($troopScore),
-            'spellWeight' => round($spellScore),
         ];
     }
 
@@ -86,7 +111,6 @@ class PlayerInsightService
             'Grand Warden' => 9,
             'Barbarian King' => 7,
             'Royal Champion' => 8,
-            'Minion Prince' => 5,
         ];
 
         return collect($heroes)
@@ -99,7 +123,6 @@ class PlayerInsightService
                     'name' => $h['name'],
                     'level' => $h['level'],
                     'maxLevel' => $h['maxLevel'],
-                    'gap' => $gap,
                     'score' => $score,
                     'isMax' => $h['level'] >= $h['maxLevel']
                 ];
@@ -112,21 +135,15 @@ class PlayerInsightService
 
     private function analyzeTroops(array $troops): array
     {
-        // List all home village troops
-        $filtered = collect($troops)
-            ->filter(fn($t) => ($t['village'] ?? '') === 'home');
-
+        $filtered = collect($troops)->filter(fn($t) => ($t['village'] ?? '') === 'home');
         if ($filtered->isEmpty())
             return ['readinessScore' => 0, 'list' => []];
 
-        $maxedCount = $filtered->filter(fn($t) => $t['level'] >= $t['maxLevel'])->count();
         $totalProgress = $filtered->sum(fn($t) => ($t['level'] / $t['maxLevel']) * 100);
         $readinessScore = $totalProgress / $filtered->count();
 
         return [
             'readinessScore' => round($readinessScore),
-            'maxedCount' => $maxedCount,
-            'totalCount' => $filtered->count(),
             'list' => $filtered->map(fn($t) => [
                 'name' => $t['name'],
                 'level' => $t['level'],
@@ -139,17 +156,14 @@ class PlayerInsightService
 
     private function analyzeSpells(array $spells): array
     {
-        $filtered = collect($spells)
-            ->filter(fn($s) => ($s['village'] ?? '') === 'home');
-
+        $filtered = collect($spells)->filter(fn($s) => ($s['village'] ?? '') === 'home');
         if ($filtered->isEmpty())
             return ['readinessScore' => 0, 'list' => []];
 
         $totalProgress = $filtered->sum(fn($s) => ($s['level'] / $s['maxLevel']) * 100);
-        $readinessScore = $totalProgress / $filtered->count();
 
         return [
-            'readinessScore' => round($readinessScore),
+            'readinessScore' => round($totalProgress / $filtered->count()),
             'list' => $filtered->map(fn($s) => [
                 'name' => $s['name'],
                 'level' => $s['level'],
@@ -163,104 +177,42 @@ class PlayerInsightService
     {
         $homeHeroes = collect($heroes)->filter(fn($h) => ($h['village'] ?? '') === 'home');
         if ($homeHeroes->isEmpty())
-            return ['averageProgress' => 0];
+            return ['averageProgress' => 0, 'list' => []];
 
         $totalProgress = $homeHeroes->sum(fn($h) => ($h['level'] / $h['maxLevel']) * 100);
 
         return [
-            'averageProgress' => $totalProgress / $homeHeroes->count(),
+            'averageProgress' => round($totalProgress / $homeHeroes->count()),
             'list' => $homeHeroes->values()->all()
         ];
     }
 
     private function analyzeEquipment(array $equipment): array
     {
-        // List all equipment
         $filtered = collect($equipment);
         if ($filtered->isEmpty())
             return ['score' => 0, 'list' => []];
-
-        $maxed = $filtered->filter(fn($e) => $e['level'] >= $e['maxLevel'])->count();
-        $nearMax = $filtered->filter(fn($e) => $e['level'] >= $e['maxLevel'] * 0.8 && $e['level'] < $e['maxLevel'])->count();
 
         $avgProgress = $filtered->sum(fn($e) => ($e['level'] / $e['maxLevel']) * 100) / $filtered->count();
 
         return [
             'score' => round($avgProgress),
-            'maxedCount' => $maxed,
-            'nearMaxCount' => $nearMax,
             'list' => $filtered->sortByDesc('level')->values()->all()
         ];
     }
 
     private function analyzeClanContribution(array $player): array
     {
-        $donations = $player['donations'] ?? 0;
-        $received = $player['donationsReceived'] ?? 0;
-        $capital = $player['clanCapitalContributions'] ?? 0;
-
-        $ratio = $received > 0 ? $donations / $received : $donations;
-
-        $roles = [
-            'leader' => 'Pemimpin',
-            'coLeader' => 'Wakil Pemimpin',
-            'elder' => 'Sesepuh',
-            'member' => 'Anggota',
-        ];
-
+        $roles = ['leader' => 'Pemimpin', 'coLeader' => 'Wakil Pemimpin', 'elder' => 'Sesepuh', 'member' => 'Anggota'];
         return [
-            'donations' => $donations,
-            'received' => $received,
-            'ratio' => round($ratio, 2),
-            'capital' => number_format($capital),
+            'donations' => $player['donations'] ?? 0,
+            'capital' => number_format($player['clanCapitalContributions'] ?? 0),
             'role' => $roles[$player['role'] ?? 'member'] ?? 'Anggota',
-            'activity' => $donations + $received > 1000 ? 'Tinggi' : ($donations + $received > 100 ? 'Sedang' : 'Rendah'),
-        ];
-    }
-
-    private function calculateWarReadiness(array $player, array $heroes, array $troops): array
-    {
-        $warPref = ($player['warPreference'] ?? 'out') === 'in';
-        $troopReady = $troops['readinessScore'] > 75;
-
-        $isReady = $warPref && $troopReady;
-
-        return [
-            'isReady' => $isReady,
-            'status' => $isReady ? 'Siap Perang' : 'Belum Siap',
-            'reason' => !$warPref ? 'Preferensi Perang diatur ke TIDAK.' : (!$troopReady ? 'Level pasukan masih kurang.' : 'Semua sistem siap.'),
         ];
     }
 
     public function getRecommendations(array $player, array $insights): array
     {
-        $recs = [];
-
-        foreach (array_slice($insights['heroOrder'], 0, 2) as $h) {
-            $recs[] = [
-                'title' => "Upgrade " . $h['name'],
-                'reason' => "Prioritas hero tertinggi untuk TH{$player['townHallLevel']}. Saat ini Lv. {$h['level']}",
-                'priority' => 'Tinggi'
-            ];
-        }
-
-        $lowTroops = collect($insights['troops']['list'])->where('status', 'RENDAH')->take(1);
-        foreach ($lowTroops as $t) {
-            $recs[] = [
-                'title' => "Upgrade " . $t['name'],
-                'reason' => "Level pasukan ini sangat rendah (Lv. {$t['level']}).",
-                'priority' => 'Sedang'
-            ];
-        }
-
-        if ($insights['spells']['readinessScore'] < 70) {
-            $recs[] = [
-                'title' => "Fokus pada Spell Utama",
-                'reason' => "Rage dan Freeze sangat penting untuk serangan tingkat tinggi.",
-                'priority' => 'Tinggi'
-            ];
-        }
-
-        return array_slice($recs, 0, 5);
+        return $this->priorityService->getPriorities($player, $insights);
     }
 }
