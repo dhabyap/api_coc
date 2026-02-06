@@ -171,11 +171,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 @foreach($recommendations as $rec)
                     <div
-                        class="glass-card p-4 rounded-xl border-l-2 {{ $rec['priority'] == 'Tinggi' ? 'border-l-red-500' : 'border-l-blue-500' }}">
+                        class="glass-card p-4 rounded-xl border-l-2 {{ $rec['priority'] == 'Tinggi' ? 'border-l-red-500' : ($rec['priority'] == 'Sedang' ? 'border-l-amber-500' : 'border-l-blue-500') }}">
                         <div class="flex justify-between items-start mb-1">
                             <h4 class="text-xs font-bold text-slate-200 uppercase">{{ $rec['title'] }}</h4>
                             <span
-                                class="text-[8px] font-black px-1.5 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700 tracking-tighter">{{ $rec['priority'] }}</span>
+                                class="text-[8px] font-black px-1.5 py-0.5 rounded-md tracking-tighter {{ $rec['priority'] == 'Tinggi' ? 'bg-red-500/20 text-red-500 border border-red-500/30' : ($rec['priority'] == 'Sedang' ? 'bg-amber-500/20 text-amber-500 border border-amber-500/30' : 'bg-blue-500/20 text-blue-500 border border-blue-500/30') }}">
+                                {{ $rec['priority'] }}
+                            </span>
                         </div>
                         <p class="text-[10px] text-slate-500 leading-relaxed">{{ $rec['reason'] }}</p>
                     </div>
@@ -223,8 +225,8 @@
                                 <div
                                     class="flex justify-between items-center border-b border-slate-800/50 pb-2 mb-2 last:border-0">
                                     <span class="text-[10px]">{{ $spell['name'] }}</span>
-                                    <span class="text-[10px] font-mono text-blue-400 font-bold">Lv.
-                                        {{ $spell['level'] }}</span>
+                                    <span class="text-[10px] font-mono text-blue-400 font-bold">Lv. {{ $spell['level'] }} /
+                                        {{ $spell['maxLevel'] }}</span>
                                 </div>
                             @endforeach
                         </div>
@@ -239,7 +241,7 @@
                                     <span class="text-[10px]">{{ $item['name'] }}</span>
                                     <span
                                         class="text-[10px] font-black {{ $item['level'] == $item['maxLevel'] ? 'text-green-500' : 'text-purple-400' }}">Lv.
-                                        {{ $item['level'] }}</span>
+                                        {{ $item['level'] }} / {{ $item['maxLevel'] }}</span>
                                 </div>
                             @endforeach
                         </div>
