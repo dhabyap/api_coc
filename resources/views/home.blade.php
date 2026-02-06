@@ -73,7 +73,8 @@
             @if(session('error'))
                 <p
                     class="text-red-500 text-sm font-medium bg-red-500/10 inline-block px-4 py-1 rounded-full border border-red-500/20 mb-4">
-                    {{ session('error') }}</p>
+                    {{ session('error') }}
+                </p>
             @endif
         </div>
     </header>
@@ -107,22 +108,20 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             @foreach($globalStats['recentAnalyses'] as $analysis)
-                <a href="{{ route('player.show', ['tag' => str_replace('#', '', $analysis['tag'])]) }}"
-                    class="player-card p-5 rounded-2xl group">
+                <div class="player-card p-5 rounded-2xl">
                     <div class="flex items-start justify-between mb-3">
                         <div
-                            class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-lg font-black text-white group-hover:bg-orange-500 transition-colors">
+                            class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-lg font-black text-white">
                             {{ $analysis['th'] }}
                         </div>
                         <span class="text-[8px] text-slate-600 font-bold uppercase">{{ $analysis['time'] }}</span>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-slate-300 group-hover:text-white truncate mb-0.5">
-                            {{ $analysis['name'] }}</h4>
-                        <p class="text-[10px] font-mono text-slate-600 group-hover:text-orange-500/70">
-                            {{ $analysis['tag'] }}</p>
+                        <h4 class="text-sm font-bold text-slate-300 truncate mb-0.5">
+                            {{ $analysis['name'] }}
+                        </h4>
                     </div>
-                </a>
+                </div>
             @endforeach
         </div>
     </section>
