@@ -14,8 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\SuggestionController;
 
 Route::get('/', [PlayerController::class, 'home'])->name('player.home');
 Route::get('/player', [PlayerController::class, 'home']); // Redirect or same as home
 Route::get('/player/search', [PlayerController::class, 'search'])->name('player.search');
 Route::get('/player/{tag}', [PlayerController::class, 'show'])->name('player.show');
+
+Route::post('/suggestions', [SuggestionController::class, 'store'])->name('suggestions.store');

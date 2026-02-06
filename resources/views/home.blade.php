@@ -126,6 +126,57 @@
         </div>
     </section>
 
+    <!-- Suggestions Section -->
+    <section class="max-w-3xl mx-auto px-6 mb-24">
+        <div class="glass p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-8 opacity-5">
+                <svg class="w-24 h-24 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" />
+                </svg>
+            </div>
+
+            <div class="relative z-10">
+                <h2 class="text-2xl font-black mb-2 text-white">Saran & Masukan</h2>
+                <p class="text-gray-400 text-sm mb-8 leading-relaxed">Punya ide fitur baru atau menemukan bug? Beritahu
+                    kami untuk membuat platform ini jadi lebih baik!</p>
+
+                @if(session('success'))
+                    <div
+                        class="bg-green-500/10 border border-green-500/20 text-green-500 px-4 py-3 rounded-xl mb-6 text-sm font-bold">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('suggestions.store') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label
+                                class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5 ml-1">Nama
+                                (Opsional)</label>
+                            <input type="text" name="name" placeholder="Siapa nama Anda?"
+                                class="w-full bg-slate-900/50 border border-white/5 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5 ml-1">Saran
+                                Anda</label>
+                            <textarea name="suggestion" rows="4" required
+                                placeholder="Tuliskan saran atau masukan Anda di sini..."
+                                class="w-full bg-slate-900/50 border border-white/5 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] uppercase tracking-wider text-xs">
+                        Kirim Masukan
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <!-- Features Section -->
     <section class="py-16 px-6 bg-gray-900/10 border-y border-white/5">
         <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
