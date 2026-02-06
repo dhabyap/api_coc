@@ -5,7 +5,7 @@ namespace App\Services;
 class PlayerInsightService
 {
     /**
-     * Build all insights for a player.
+     * Build all insights for a player in Bahasa Indonesia.
      */
     public function getAllInsights(array $player): array
     {
@@ -41,11 +41,11 @@ class PlayerInsightService
 
         $totalScore = ($heroScore * 0.5) + ($troopScore * 0.3) + ($spellScore * 0.2);
 
-        $status = 'Needs Improvement';
+        $status = 'Perlu Peningkatan';
         if ($totalScore >= 85)
-            $status = 'Excellent';
+            $status = 'Sangat Baik';
         elseif ($totalScore >= 65)
-            $status = 'Good';
+            $status = 'Cukup Baik';
 
         return [
             'score' => round($totalScore),
@@ -64,16 +64,16 @@ class PlayerInsightService
 
         if ($th >= 9 && $heroes['averageProgress'] < 60) {
             $isRushed = true;
-            $reasons[] = "Hero levels are significantly behind for TH{$th}.";
+            $reasons[] = "Level Hero jauh di bawah standar untuk TH{$th}.";
         }
 
         if ($troops['readinessScore'] < 50) {
             $isRushed = true;
-            $reasons[] = "Core offensive troops are underleveled.";
+            $reasons[] = "Pasukan utama masih level rendah.";
         }
 
         return [
-            'status' => $isRushed ? 'Rushed' : 'Solid',
+            'status' => $isRushed ? 'Prematur' : 'Solid',
             'isRushed' => $isRushed,
             'reasons' => $reasons,
         ];
@@ -94,7 +94,6 @@ class PlayerInsightService
             ->map(function ($h) use ($priorityMap) {
                 $gap = $h['maxLevel'] - $h['level'];
                 $basePriority = $priorityMap[$h['name']] ?? 1;
-                // Higher score = higher priority
                 $score = ($basePriority * 2) + ($gap * 0.5);
                 return [
                     'name' => $h['name'],
@@ -113,24 +112,9 @@ class PlayerInsightService
 
     private function analyzeTroops(array $troops): array
     {
-        $metaTroops = [
-            'Barbarian',
-            'Archer',
-            'Giant',
-            'Balloon',
-            'Wizard',
-            'Dragon',
-            'P.E.K.K.A',
-            'Miner',
-            'Hog Rider',
-            'Electro Dragon',
-            'Dragon Rider',
-            'Root Rider',
-            'Yeti'
-        ];
-
+        // List all home village troops
         $filtered = collect($troops)
-            ->filter(fn($t) => in_array($t['name'], $metaTroops) && ($t['village'] ?? '') === 'home');
+            ->filter(fn($t) => ($t['village'] ?? '') === 'home');
 
         if ($filtered->isEmpty())
             return ['readinessScore' => 0, 'list' => []];
@@ -148,17 +132,15 @@ class PlayerInsightService
                 'level' => $t['level'],
                 'maxLevel' => $t['maxLevel'],
                 'progress' => round(($t['level'] / $t['maxLevel']) * 100),
-                'status' => $t['level'] >= $t['maxLevel'] ? 'MAX' : ($t['level'] >= $t['maxLevel'] * 0.8 ? 'NEAR' : 'LOW')
+                'status' => $t['level'] >= $t['maxLevel'] ? 'MAX' : ($t['level'] >= $t['maxLevel'] * 0.8 ? 'DEKAT' : 'RENDAH')
             ])->values()->all(),
         ];
     }
 
     private function analyzeSpells(array $spells): array
     {
-        $metaSpells = ['Rage Spell', 'Freeze Spell', 'Healing Spell', 'Invisibility Spell', 'Recall Spell', 'Overgrowth Spell', 'Lightning Spell'];
-
         $filtered = collect($spells)
-            ->filter(fn($s) => in_array($s['name'], $metaSpells) && ($s['village'] ?? '') === 'home');
+            ->filter(fn($s) => ($s['village'] ?? '') === 'home');
 
         if ($filtered->isEmpty())
             return ['readinessScore' => 0, 'list' => []];
@@ -193,7 +175,8 @@ class PlayerInsightService
 
     private function analyzeEquipment(array $equipment): array
     {
-        $filtered = collect($equipment)->filter(fn($e) => ($e['maxLevel'] ?? 0) >= 18);
+        // List all equipment
+        $filtered = collect($equipment);
         if ($filtered->isEmpty())
             return ['score' => 0, 'list' => []];
 
@@ -218,22 +201,25 @@ class PlayerInsightService
 
         $ratio = $received > 0 ? $donations / $received : $donations;
 
+        $roles = [
+            'leader' => 'Pemimpin',
+            'coLeader' => 'Wakil Pemimpin',
+            'elder' => 'Sesepuh',
+            'member' => 'Anggota',
+        ];
+
         return [
             'donations' => $donations,
             'received' => $received,
             'ratio' => round($ratio, 2),
             'capital' => number_format($capital),
-            'role' => ucwords($player['role'] ?? 'Member'),
-            'activity' => $donations + $received > 1000 ? 'High' : ($donations + $received > 100 ? 'Medium' : 'Low'),
+            'role' => $roles[$player['role'] ?? 'member'] ?? 'Anggota',
+            'activity' => $donations + $received > 1000 ? 'Tinggi' : ($donations + $received > 100 ? 'Sedang' : 'Rendah'),
         ];
     }
 
     private function calculateWarReadiness(array $player, array $heroes, array $troops): array
     {
-        $isHeroUpgrading = false; // Note: CoC API doesn't explicitly show "upgrading" status in basic player endpoint usually, 
-        // unless we compare current level/max and maybe other flags if they exist. 
-        // But usually, if hero is not available it's because of upgrade.
-
         $warPref = ($player['warPreference'] ?? 'out') === 'in';
         $troopReady = $troops['readinessScore'] > 75;
 
@@ -241,8 +227,8 @@ class PlayerInsightService
 
         return [
             'isReady' => $isReady,
-            'status' => $isReady ? 'Ready for War' : 'Not Ready',
-            'reason' => !$warPref ? 'War Preference is set to OUT.' : (!$troopReady ? 'Core troops are underleveled.' : 'All systems go.'),
+            'status' => $isReady ? 'Siap Perang' : 'Belum Siap',
+            'reason' => !$warPref ? 'Preferensi Perang diatur ke TIDAK.' : (!$troopReady ? 'Level pasukan masih kurang.' : 'Semua sistem siap.'),
         ];
     }
 
@@ -250,31 +236,28 @@ class PlayerInsightService
     {
         $recs = [];
 
-        // Hero Priority
         foreach (array_slice($insights['heroOrder'], 0, 2) as $h) {
             $recs[] = [
                 'title' => "Upgrade " . $h['name'],
-                'reason' => "Highest priority hero for TH{$player['townHallLevel']}. Current Lv. {$h['level']}",
-                'priority' => 'High'
+                'reason' => "Prioritas hero tertinggi untuk TH{$player['townHallLevel']}. Saat ini Lv. {$h['level']}",
+                'priority' => 'Tinggi'
             ];
         }
 
-        // Troop Priority
-        $lowTroops = collect($insights['troops']['list'])->where('status', 'LOW')->take(1);
+        $lowTroops = collect($insights['troops']['list'])->where('status', 'RENDAH')->take(1);
         foreach ($lowTroops as $t) {
             $recs[] = [
                 'title' => "Upgrade " . $t['name'],
-                'reason' => "Meta troop is significantly underleveled (Lv. {$t['level']}).",
-                'priority' => 'Medium'
+                'reason' => "Level pasukan ini sangat rendah (Lv. {$t['level']}).",
+                'priority' => 'Sedang'
             ];
         }
 
-        // Spell Priority
         if ($insights['spells']['readinessScore'] < 70) {
             $recs[] = [
-                'title' => "Focus on Core Spells",
-                'reason' => "Rage and Freeze are essential for high-level war attacks.",
-                'priority' => 'High'
+                'title' => "Fokus pada Spell Utama",
+                'reason' => "Rage dan Freeze sangat penting untuk serangan tingkat tinggi.",
+                'priority' => 'Tinggi'
             ];
         }
 
