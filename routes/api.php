@@ -20,6 +20,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/test', function () {
+    return response()->json([
+        'status' => 'API OK',
+        'time' => now()
+    ]);
+});
+
+
 Route::prefix('coc')->group(function () {
     Route::get('/status', [CocController::class, 'status']);
     Route::get('/player/{playerTag}', [CocController::class, 'player']);
