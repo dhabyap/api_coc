@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+use App\Http\Controllers\PlayerController;
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/player', [PlayerController::class, 'index'])->name('player.index');
+Route::get('/player/search', [PlayerController::class, 'show'])->name('player.search');
