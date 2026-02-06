@@ -13,7 +13,7 @@ class CocService
     public function __construct()
     {
         $this->baseUrl = 'https://api.clashofclans.com/v1';
-        $this->token = config('services.coc.token') ?: env('COC_API_TOKEN');
+        $this->token = env('COC_API_TOKEN');
     }
 
     /**
