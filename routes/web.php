@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PlayerController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/player', [PlayerController::class, 'index'])->name('player.index');
-Route::get('/player/search', [PlayerController::class, 'show'])->name('player.search');
+Route::get('/', [PlayerController::class, 'home'])->name('player.home');
+Route::get('/player', [PlayerController::class, 'home']); // Redirect or same as home
+Route::get('/player/search', [PlayerController::class, 'search'])->name('player.search');
+Route::get('/player/{tag}', [PlayerController::class, 'show'])->name('player.show');

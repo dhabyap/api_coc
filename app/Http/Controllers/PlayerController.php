@@ -2,51 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CocService;
+use App\Services\CocPlayerService;
+use App\Services\UpgradeRecommendationService;
 use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
-    protected CocService $cocService;
+    protected CocPlayerService $playerService;
+    protected UpgradeRecommendationService $recommendationService;
 
-    public function __construct(CocService $cocService)
-    {
-        $this->cocService = $cocService;
+    public function __construct(
+        CocPlayerService $playerService,
+        UpgradeRecommendationService $recommendationService
+    ) {
+        $this->playerService = $playerService;
+        $this->recommendationService = $recommendationService;
     }
 
     /**
-     * Show the player search form.
+     * Show the homepage.
      */
-    public function index()
+    public function home()
     {
-        return view('player-search');
+        return view('home');
     }
 
     /**
-     * Search for a player and show results.
+     * Show the player search form redirect or direct search.
      */
-    public function show(Request $request)
+    public function search(Request $request)
     {
         $request->validate([
             'tag' => 'required|string|min:3',
         ]);
 
-        $tag = $request->input('tag');
+        $tag = str_replace('#', '', $request->input('tag'));
+        return redirect()->route('player.show', ['tag' => $tag]);
+    }
 
-        // Normalize tag (ensure starts with #)
-        if (!str_starts_with($tag, '#')) {
-            $tag = '#' . $tag;
-        }
-
-        $result = $this->cocService->getPlayer($tag);
+    /**
+     * Search for a player and show results.
+     */
+    public function show(string $tag)
+    {
+        $result = $this->playerService->getPlayerByTag($tag);
 
         if (!$result['success']) {
-            return redirect()->route('player.index')
+            return redirect()->route('player.home')
                 ->with('error', $result['message'] ?? 'Player not found.')
                 ->withInput();
         }
 
         $player = $result['data'];
+        $recommendations = $this->recommendationService->getRecommendations($player);
 
         // Filter Epic Equipment (maxLevel >= 18)
         $epicEquipment = collect($player['heroEquipment'] ?? [])
@@ -59,6 +67,9 @@ class PlayerController extends Controller
         return view('player-result', [
             'player' => $player,
             'epicEquipment' => $epicEquipment,
+            'recommendations' => $recommendations,
+            'lastFetchedAt' => $result['last_fetched_at'],
+            'source' => $result['source'],
         ]);
     }
 }
