@@ -3,20 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Services\CocPlayerService;
-use App\Services\UpgradeRecommendationService;
+use App\Services\PlayerInsightService;
 use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
     protected CocPlayerService $playerService;
-    protected UpgradeRecommendationService $recommendationService;
+    protected PlayerInsightService $insightService;
 
     public function __construct(
         CocPlayerService $playerService,
-        UpgradeRecommendationService $recommendationService
+        PlayerInsightService $insightService
     ) {
         $this->playerService = $playerService;
-        $this->recommendationService = $recommendationService;
+        $this->insightService = $insightService;
     }
 
     /**
@@ -54,19 +54,14 @@ class PlayerController extends Controller
         }
 
         $player = $result['data'];
-        $recommendations = $this->recommendationService->getRecommendations($player);
 
-        // Filter Epic Equipment (maxLevel >= 18)
-        $epicEquipment = collect($player['heroEquipment'] ?? [])
-            ->filter(function ($item) {
-                return isset($item['maxLevel']) && $item['maxLevel'] >= 18;
-            })
-            ->sortByDesc('level')
-            ->values();
+        // Get Advanced Insights
+        $insights = $this->insightService->getAllInsights($player);
+        $recommendations = $this->insightService->getRecommendations($player, $insights);
 
         return view('player-result', [
             'player' => $player,
-            'epicEquipment' => $epicEquipment,
+            'insights' => $insights,
             'recommendations' => $recommendations,
             'lastFetchedAt' => $result['last_fetched_at'],
             'source' => $result['source'],
