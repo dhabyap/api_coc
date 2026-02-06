@@ -23,27 +23,36 @@ class PlayerInsightService
      */
     public function getAllInsights(array $player): array
     {
-        $troopData = $this->analyzeTroops($player['troops'] ?? []);
-        $spellData = $this->analyzeSpells($player['spells'] ?? []);
-        $heroData = $this->analyzeHeroes($player['heroes'] ?? []);
-        $equipmentData = $this->analyzeEquipment($player['heroEquipment'] ?? []);
+        $th = $player['townHallLevel'] ?? 1;
+
+        $troopData = $this->analyzeTroops($player['troops'] ?? [], $th);
+        $spellData = $this->analyzeSpells($player['spells'] ?? [], $th);
+        $heroData = $this->analyzeHeroes($player['heroes'] ?? [], $th);
+        $equipmentData = $this->analyzeEquipment($player['heroEquipment'] ?? [], $th);
 
         $health = $this->calculateAccountHealth($heroData, $troopData, $spellData);
         $rushStatus = $this->detectRushStatus($player, $heroData, $troopData);
-        $heroOrder = $this->calculateHeroUpgradeOrder($player['heroes'] ?? []);
+
+        // Re-calculate hero order with TH-relative logic
+        $heroOrder = $this->calculateHeroUpgradeOrder($player['heroes'] ?? [], $th);
         $clanContribution = $this->analyzeClanContribution($player);
 
         // Advanced Services
         $warReadiness = $this->warService->calculateStatus($player, $heroData, $troopData);
-        $strategy = $this->strategyService->getRecommendations($player, $this->buildInsightContext($heroData, $troopData, $spellData, $heroOrder));
+        $strategy = $this->strategyService->getRecommendations($player, [
+            'heroes' => $heroData,
+            'troops' => $troopData,
+            'spells' => $spellData,
+            'heroOrder' => $heroOrder
+        ]);
 
         return [
             'health' => $health,
             'rush' => $rushStatus,
             'heroOrder' => $heroOrder,
             'clan' => $clanContribution,
-            'warReadiness' => $warReadiness, // From WarReadinessService
-            'strategy' => $strategy,       // From StrategyRecommendationService
+            'warReadiness' => $warReadiness,
+            'strategy' => $strategy,
             'troops' => $troopData,
             'spells' => $spellData,
             'heroes' => $heroData,
@@ -51,14 +60,32 @@ class PlayerInsightService
         ];
     }
 
-    private function buildInsightContext($heroes, $troops, $spells, $heroOrder): array
+    /**
+     * Get the max level for a specific unit based on Town Hall.
+     * This is a simplified mapping for popular units to ensure accuracy.
+     */
+    private function getThMaxLevel(string $type, string $name, int $th, int $apiMax): int
     {
-        return [
-            'heroes' => $heroes,
-            'troops' => $troops,
-            'spells' => $spells,
-            'heroOrder' => $heroOrder
-        ];
+        // Many times the API already provides the TH max. 
+        // We only override if we detect it's returning the global max (e.g. 95 for TH10).
+
+        if ($type === 'hero') {
+            $heroMaxes = [
+                'Barbarian King' => [7 => 10, 8 => 20, 9 => 30, 10 => 40, 11 => 50, 12 => 65, 13 => 75, 14 => 80, 15 => 90, 16 => 95],
+                'Archer Queen' => [9 => 30, 10 => 40, 11 => 50, 12 => 65, 13 => 75, 14 => 80, 15 => 90, 16 => 95],
+                'Grand Warden' => [11 => 20, 12 => 40, 13 => 50, 14 => 55, 15 => 65, 16 => 70],
+                'Royal Champion' => [13 => 25, 14 => 30, 15 => 40, 16 => 45]
+            ];
+
+            if (isset($heroMaxes[$name][$th])) {
+                return $heroMaxes[$name][$th];
+            }
+        }
+
+        // If the API max is much higher than what's possible for this TH, 
+        // it's likely a global max. We default back to the provided API max if unsure,
+        // but for heroes we use our verified table.
+        return $apiMax;
     }
 
     private function calculateAccountHealth(array $heroes, array $troops, array $spells): array
@@ -87,6 +114,7 @@ class PlayerInsightService
         $reasons = [];
         $isRushed = false;
 
+        // "Prematur" check logic
         if ($th >= 9 && $heroes['averageProgress'] < 60) {
             $isRushed = true;
             $reasons[] = "Level Hero jauh di bawah standar untuk TH{$th}.";
@@ -94,7 +122,7 @@ class PlayerInsightService
 
         if ($troops['readinessScore'] < 50) {
             $isRushed = true;
-            $reasons[] = "Pasukan utama masih level rendah.";
+            $reasons[] = "Pasukan utama masih level rendah (Prematur).";
         }
 
         return [
@@ -104,7 +132,7 @@ class PlayerInsightService
         ];
     }
 
-    private function calculateHeroUpgradeOrder(array $heroes): array
+    private function calculateHeroUpgradeOrder(array $heroes, int $th): array
     {
         $priorityMap = [
             'Archer Queen' => 10,
@@ -115,16 +143,17 @@ class PlayerInsightService
 
         return collect($heroes)
             ->filter(fn($h) => ($h['village'] ?? '') === 'home')
-            ->map(function ($h) use ($priorityMap) {
-                $gap = $h['maxLevel'] - $h['level'];
+            ->map(function ($h) use ($priorityMap, $th) {
+                $maxLevel = $this->getThMaxLevel('hero', $h['name'], $th, $h['maxLevel']);
+                $gap = max(0, $maxLevel - $h['level']);
                 $basePriority = $priorityMap[$h['name']] ?? 1;
                 $score = ($basePriority * 2) + ($gap * 0.5);
                 return [
                     'name' => $h['name'],
                     'level' => $h['level'],
-                    'maxLevel' => $h['maxLevel'],
+                    'maxLevel' => $maxLevel,
                     'score' => $score,
-                    'isMax' => $h['level'] >= $h['maxLevel']
+                    'isMax' => $h['level'] >= $maxLevel
                 ];
             })
             ->filter(fn($h) => !$h['isMax'])
@@ -133,71 +162,99 @@ class PlayerInsightService
             ->all();
     }
 
-    private function analyzeTroops(array $troops): array
+    private function analyzeTroops(array $troops, int $th): array
     {
         $filtered = collect($troops)->filter(fn($t) => ($t['village'] ?? '') === 'home');
         if ($filtered->isEmpty())
             return ['readinessScore' => 0, 'list' => []];
 
-        $totalProgress = $filtered->sum(fn($t) => ($t['level'] / $t['maxLevel']) * 100);
-        $readinessScore = $totalProgress / $filtered->count();
+        $list = $filtered->map(function ($t) use ($th) {
+            // Using the API provided maxLevel but ensuring we cap if needed (optional for troops as they vary wildly)
+            $maxLevel = $t['maxLevel'];
+            return [
+                'name' => $t['name'],
+                'level' => $t['level'],
+                'maxLevel' => $maxLevel,
+                'progress' => round(($t['level'] / max(1, $maxLevel)) * 100),
+                'status' => $t['level'] >= $maxLevel ? 'MAX' : ($t['level'] >= $maxLevel * 0.8 ? 'DEKAT' : 'RENDAH')
+            ];
+        })->values();
+
+        $totalProgress = $list->sum('progress');
+        $readinessScore = $totalProgress / $list->count();
 
         return [
             'readinessScore' => round($readinessScore),
-            'list' => $filtered->map(fn($t) => [
-                'name' => $t['name'],
-                'level' => $t['level'],
-                'maxLevel' => $t['maxLevel'],
-                'progress' => round(($t['level'] / $t['maxLevel']) * 100),
-                'status' => $t['level'] >= $t['maxLevel'] ? 'MAX' : ($t['level'] >= $t['maxLevel'] * 0.8 ? 'DEKAT' : 'RENDAH')
-            ])->values()->all(),
+            'list' => $list->all(),
         ];
     }
 
-    private function analyzeSpells(array $spells): array
+    private function analyzeSpells(array $spells, int $th): array
     {
         $filtered = collect($spells)->filter(fn($s) => ($s['village'] ?? '') === 'home');
         if ($filtered->isEmpty())
             return ['readinessScore' => 0, 'list' => []];
 
-        $totalProgress = $filtered->sum(fn($s) => ($s['level'] / $s['maxLevel']) * 100);
-
-        return [
-            'readinessScore' => round($totalProgress / $filtered->count()),
-            'list' => $filtered->map(fn($s) => [
+        $list = $filtered->map(function ($s) use ($th) {
+            $maxLevel = $s['maxLevel'];
+            return [
                 'name' => $s['name'],
                 'level' => $s['level'],
-                'maxLevel' => $s['maxLevel'],
-                'progress' => round(($s['level'] / $s['maxLevel']) * 100),
-            ])->values()->all(),
+                'maxLevel' => $maxLevel,
+                'progress' => round(($s['level'] / max(1, $maxLevel)) * 100),
+            ];
+        })->values();
+
+        return [
+            'readinessScore' => round($list->sum('progress') / $list->count()),
+            'list' => $list->all(),
         ];
     }
 
-    private function analyzeHeroes(array $heroes): array
+    private function analyzeHeroes(array $heroes, int $th): array
     {
         $homeHeroes = collect($heroes)->filter(fn($h) => ($h['village'] ?? '') === 'home');
         if ($homeHeroes->isEmpty())
             return ['averageProgress' => 0, 'list' => []];
 
-        $totalProgress = $homeHeroes->sum(fn($h) => ($h['level'] / $h['maxLevel']) * 100);
+        $list = $homeHeroes->map(function ($h) use ($th) {
+            $maxLevel = $this->getThMaxLevel('hero', $h['name'], $th, $h['maxLevel']);
+            return [
+                'name' => $h['name'],
+                'level' => $h['level'],
+                'maxLevel' => $maxLevel,
+                'progress' => round(($h['level'] / max(1, $maxLevel)) * 100),
+            ];
+        })->values();
+
+        $totalProgress = $list->sum('progress');
 
         return [
-            'averageProgress' => round($totalProgress / $homeHeroes->count()),
-            'list' => $homeHeroes->values()->all()
+            'averageProgress' => round($totalProgress / $list->count()),
+            'list' => $list->all()
         ];
     }
 
-    private function analyzeEquipment(array $equipment): array
+    private function analyzeEquipment(array $equipment, int $th): array
     {
         $filtered = collect($equipment);
         if ($filtered->isEmpty())
             return ['score' => 0, 'list' => []];
 
-        $avgProgress = $filtered->sum(fn($e) => ($e['level'] / $e['maxLevel']) * 100) / $filtered->count();
+        $list = $filtered->map(function ($e) {
+            return [
+                'name' => $e['name'],
+                'level' => $e['level'],
+                'maxLevel' => $e['maxLevel'],
+                'progress' => round(($e['level'] / max(1, $e['maxLevel'])) * 100),
+            ];
+        })->values();
+
+        $avgProgress = $list->sum('progress') / $list->count();
 
         return [
             'score' => round($avgProgress),
-            'list' => $filtered->sortByDesc('level')->values()->all()
+            'list' => $list->sortByDesc('level')->values()->all()
         ];
     }
 

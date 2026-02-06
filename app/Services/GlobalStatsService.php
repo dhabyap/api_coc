@@ -8,11 +8,12 @@ use Illuminate\Support\Facades\Cache;
 class GlobalStatsService
 {
     /**
-     * Get anonymous global statistics.
+     * Get anonymous global statistics and random recent analyses.
      */
     public function getGlobalStats(): array
     {
-        return Cache::remember('coc_global_stats', 3600, function () {
+        // We use a shorter cache or no cache for the "Recent" part to keep it fresh
+        $stats = Cache::remember('coc_global_stats_basic', 3600, function () {
             $players = CocPlayer::all();
             $total = $players->count();
 
@@ -24,18 +25,15 @@ class GlobalStatsService
                 ];
             }
 
-            // Simple aggregation for "Live" feel
             $warReady = 0;
             $troopCounts = [];
 
             foreach ($players as $p) {
                 $payload = $p->payload;
-                // Simple heuristic for "Ready" in global context
                 if (($payload['townHallLevel'] ?? 1) >= 11 && ($payload['heroes'][0]['level'] ?? 0) >= 40) {
                     $warReady++;
                 }
 
-                // Count troops for "Most Recommended" (mock logic for demo)
                 foreach ($payload['troops'] ?? [] as $t) {
                     if ($t['level'] < $t['maxLevel']) {
                         $troopCounts[$t['name']] = ($troopCounts[$t['name']] ?? 0) + 1;
@@ -50,8 +48,26 @@ class GlobalStatsService
                 'totalAccounts' => $total,
                 'warReadyCount' => $warReady,
                 'topRecommendedTroop' => $topTroop,
-                'lastUpdate' => now()->toDateTimeString(),
             ];
         });
+
+        // Get 4 random recent analyses
+        $recentAnalyses = CocPlayer::latest()
+            ->limit(10)
+            ->get()
+            ->shuffle()
+            ->take(4)
+            ->map(function ($p) {
+                return [
+                    'name' => $p->player_name,
+                    'tag' => $p->player_tag,
+                    'th' => $p->town_hall_level,
+                    'time' => $p->updated_at->diffForHumans()
+                ];
+            })->toArray();
+
+        $stats['recentAnalyses'] = $recentAnalyses;
+
+        return $stats;
     }
 }
