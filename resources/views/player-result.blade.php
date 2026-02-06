@@ -85,54 +85,118 @@
 
         <!-- HERO SECTION: PROFILE SUMMARY -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Basic Profile -->
-            <div
-                class="lg:col-span-2 glass-card rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 shadow-2xl shine">
-                <div class="relative shrink-0">
-                    <div
-                        class="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-600 rounded-3xl flex items-center justify-center text-5xl font-black text-white shadow-xl">
-                        {{ $player['townHallLevel'] }}
-                    </div>
-                    <div
-                        class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-slate-900 px-3 py-1 rounded-full border border-slate-700 text-[10px] font-black uppercase tracking-tighter shadow-lg">
-                        TH LEVEL</div>
+            <!-- Basic Profile (Redesigned for Screenshot-able Look) -->
+            <div class="lg:col-span-2 relative overflow-hidden rounded-3xl group">
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-slate-900 to-slate-900 z-0"></div>
+                <div
+                    class="absolute -top-24 -right-24 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-500/20 transition-all duration-700">
                 </div>
-                <div class="text-center md:text-left">
-                    <h1 class="text-3xl md:text-5xl font-black tracking-tighter mb-1">{{ $player['name'] }}</h1>
-                    <p class="text-orange-500 font-mono text-lg font-bold mb-4 tracking-widest">{{ $player['tag'] }}</p>
-                    <div class="flex flex-wrap justify-center md:justify-start gap-2">
-                        @if(isset($player['clan']))
-                            <div
-                                class="flex items-center gap-2 bg-blue-500/10 text-blue-400 px-4 py-1.5 rounded-xl border border-blue-500/20 text-xs font-black uppercase">
-                                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                                {{ $player['clan']['name'] }}
-                            </div>
-                        @endif
+
+                <div class="relative z-10 p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 shine">
+                    <div class="relative shrink-0">
                         <div
-                            class="bg-slate-800 text-slate-400 px-4 py-1.5 rounded-xl border border-slate-700 text-xs font-black uppercase">
-                            {{ $player['league']['name'] ?? 'TIDAK ADA LIGA' }}
+                            class="w-28 h-28 bg-gradient-to-br from-orange-400 to-red-600 rounded-[2rem] flex items-center justify-center text-6xl font-black text-white shadow-[0_0_40px_rgba(234,88,12,0.3)] transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+                            {{ $player['townHallLevel'] }}
+                        </div>
+                        <div
+                            class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl border-2 border-slate-900">
+                            TH {{ $player['townHallLevel'] }}
+                        </div>
+                    </div>
+
+                    <div class="text-center md:text-left">
+                        <div class="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+                            <h1
+                                class="text-4xl md:text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
+                                {{ $player['name'] }}
+                            </h1>
+                            @if($insights['health']['score'] >= 90)
+                                <div
+                                    class="inline-flex items-center gap-1 bg-yellow-400 text-slate-900 px-3 py-1 rounded-full text-[10px] font-black uppercase self-center md:self-auto animate-bounce mt-2 md:mt-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                    ELITE PLAYER
+                                </div>
+                            @endif
+                        </div>
+
+                        <p
+                            class="text-orange-500 font-mono text-xl font-bold mb-6 tracking-[0.2em] flex items-center justify-center md:justify-start gap-2">
+                            <span class="opacity-50">#</span>{{ $player['tag'] }}
+                        </p>
+
+                        <div class="flex flex-wrap justify-center md:justify-start gap-3">
+                            @if(isset($player['clan']))
+                                <div
+                                    class="flex items-center gap-3 bg-white/5 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/10 shadow-lg">
+                                    <div class="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+                                    </div>
+                                    <span
+                                        class="text-sm font-bold text-slate-200 uppercase tracking-tight">{{ $player['clan']['name'] }}</span>
+                                </div>
+                            @endif
+                            <div
+                                class="bg-indigo-500/10 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-indigo-500/20 shadow-lg">
+                                <span
+                                    class="text-xs font-black text-indigo-400 uppercase tracking-widest">{{ $player['league']['name'] ?? 'NO LEAGUE' }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- High Progress Motivational Text -->
+                @if($insights['health']['score'] >= 90)
+                    <div
+                        class="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-yellow-500/20 via-transparent to-yellow-500/20 py-2 border-t border-yellow-500/10">
+                        <p
+                            class="text-[10px] text-center font-black text-yellow-500 uppercase tracking-[0.3em] animate-pulse">
+                            @php
+                                $quotes = [
+                                    "Master Strategi Sejati! Akun Anda hampir mencapai puncak kejayaan!",
+                                    "Luar Biasa! Pertahanan dan Pasukan Anda adalah mimpi buruk lawan!",
+                                    "Aura Juara! Tinggal selangkah lagi menuju Max Out sempurna!",
+                                    "Inspirasi Clan! Statistik Anda menunjukkan dedikasi level tinggi!"
+                                ];
+                                echo $quotes[array_rand($quotes)];
+                            @endphp
+                        </p>
+                    </div>
+                @endif
             </div>
 
-            <!-- War Readiness Card -->
+            <!-- War Readiness Card (Styled as a supporting badge) -->
             <div
-                class="glass-card rounded-3xl p-8 flex flex-col justify-between border-t border-r border-white/5 relative overflow-hidden">
+                class="glass-card rounded-3xl p-8 flex flex-col justify-between border-t border-white/5 relative overflow-hidden shine">
                 <div
-                    class="absolute -top-4 -right-4 w-20 h-20 bg-{{ $insights['warReadiness']['status_id'] == 'ready' ? 'green' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'amber' : 'red') }}-500/10 blur-3xl">
+                    class="absolute -top-10 -right-10 w-32 h-32 bg-{{ $insights['warReadiness']['status_id'] == 'ready' ? 'green' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'amber' : 'red') }}-500/10 blur-3xl">
                 </div>
+
                 <div>
-                    <p class="text-slate-500 text-[10px] uppercase font-bold tracking-widest mb-2">War Readiness Status
-                    </p>
+                    <div class="flex justify-between items-start mb-4">
+                        <p class="text-slate-500 text-[10px] uppercase font-bold tracking-[0.2em]">War Status</p>
+                        <div
+                            class="w-2 h-2 rounded-full bg-{{ $insights['warReadiness']['status_id'] == 'ready' ? 'green' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'amber' : 'red') }}-500 animate-ping">
+                        </div>
+                    </div>
                     <h3
-                        class="text-3xl font-black leading-tight {{ $insights['warReadiness']['status_id'] == 'ready' ? 'text-green-500' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'text-amber-500' : 'text-red-500') }}">
+                        class="text-4xl font-black leading-none mb-2 tracking-tighter {{ $insights['warReadiness']['status_id'] == 'ready' ? 'text-green-500' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'text-amber-500' : 'text-red-500') }}">
                         {{ $insights['warReadiness']['label'] }}
                     </h3>
+                    <p class="text-[11px] text-slate-400 leading-relaxed font-medium mt-4 line-clamp-3">
+                        {{ $insights['warReadiness']['reason'] }}
+                    </p>
                 </div>
-                <p class="mt-4 text-xs text-slate-400 leading-relaxed font-medium">
-                    {{ $insights['warReadiness']['reason'] }}
-                </p>
+
+                <div class="mt-8 pt-4 border-t border-slate-800/50">
+                    <div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-500">
+                        <span>Readiness Level</span>
+                        <span
+                            class="text-white">{{ $insights['warReadiness']['status_id'] == 'ready' ? '100%' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? '75%' : '40%') }}</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -172,7 +236,8 @@
                         Health</p>
                     <div class="text-6xl font-black text-white mb-2">{{ $insights['health']['score'] }}%</div>
                     <div class="text-sm font-bold text-blue-400 uppercase tracking-widest">
-                        {{ $insights['health']['status'] }}</div>
+                        {{ $insights['health']['status'] }}
+                    </div>
                 </div>
             </div>
 
@@ -195,15 +260,18 @@
                         <div class="space-y-4">
                             <div>
                                 <h4 class="text-xl font-black text-white tracking-tight">
-                                    {{ $insights['strategy']['strategy']['name'] }}</h4>
+                                    {{ $insights['strategy']['strategy']['name'] }}
+                                </h4>
                                 <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-                                    {{ $insights['strategy']['strategy']['description'] }}</p>
+                                    {{ $insights['strategy']['strategy']['description'] }}
+                                </p>
                             </div>
                             <div class="pt-4 border-t border-slate-800">
                                 <span class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Recommended
                                     Spells</span>
                                 <div class="mt-2 text-xs font-black text-blue-400">
-                                    {{ $insights['strategy']['strategy']['spells'] }}</div>
+                                    {{ $insights['strategy']['strategy']['spells'] }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -339,10 +407,85 @@
             </div>
         </div>
 
+        <!-- SUGGESTIONS & FEEDBACK SECTION -->
+        <section class="space-y-6 pt-10 border-t border-slate-800/50">
+            <div class="flex flex-col md:flex-row justify-between items-end gap-4">
+                <div>
+                    <h2 class="text-2xl font-black flex items-center gap-3">
+                        <span class="w-2 h-6 bg-blue-500 rounded-full"></span>
+                        SARAN & MASUKAN
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">Berikan masukan untuk meningkatkan strategi player ini.</p>
+                </div>
+            </div>
+
+            @if(session('success'))
+                <div class="bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-2xl text-xs font-bold animate-pulse">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-2xl text-xs font-bold">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Suggestion List -->
+                <div class="space-y-4">
+                    <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Saran Terbaru</h3>
+                    <div class="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                        @forelse($suggestions as $s)
+                            <div class="glass-card p-4 rounded-2xl border-l-2 border-l-blue-500/50">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="text-xs font-black text-slate-200">{{ $s->name ?? 'Anonim' }}</span>
+                                    <span class="text-[9px] text-slate-600 font-mono">{{ $s->created_at->diffForHumans() }}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-400 leading-relaxed italic">"{{ $s->suggestion }}"</p>
+                            </div>
+                        @empty
+                            <div class="text-center py-10 bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
+                                <p class="text-xs text-slate-600">Belum ada saran untuk player ini. <br> Jadilah yang pertama memberikan masukan!</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Suggestion Form -->
+                <div class="glass-card rounded-3xl p-6 border-t border-white/5">
+                    <h3 class="text-sm font-black text-white mb-6">Kirim Saran Baru</h3>
+                    <form action="{{ route('suggestions.store') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <input type="hidden" name="tag_id" value="{{ $player['tag'] }}">
+                        
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Nama (Opsional)</label>
+                            <input type="text" name="name" placeholder="Contoh: Master COC" 
+                                class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Saran Strategi</label>
+                            <textarea name="suggestion" required rows="4" placeholder="Tuliskan saran Anda di sini..."
+                                class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors resize-none"></textarea>
+                        </div>
+
+                        <button type="submit" 
+                            class="w-full bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-widest py-3.5 rounded-xl transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
+                            <span>Kirim Saran</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
         <!-- Footer -->
         <footer class="pt-16 text-center">
-            <p class="text-[9px] text-slate-700 uppercase tracking-[0.4em] font-black">CoC Deep Insight System &bull;
-                2026</p>
+            <p class="text-[9px] text-slate-700 uppercase tracking-[0.4em] font-black">CoC Deep Insight System &bull; 2026</p>
         </footer>
     </div>
 </body>

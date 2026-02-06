@@ -7,6 +7,8 @@ use App\Services\PlayerInsightService;
 use App\Services\GlobalStatsService;
 use Illuminate\Http\Request;
 
+use App\Models\Suggestion;
+
 class PlayerController extends Controller
 {
     protected CocPlayerService $playerService;
@@ -64,10 +66,16 @@ class PlayerController extends Controller
         $insights = $this->insightService->getAllInsights($player);
         $recommendations = $this->insightService->getRecommendations($player, $insights);
 
+        $suggestions = Suggestion::where('tag_id', str_replace('#', '', $tag))
+            ->latest()
+            ->limit(5)
+            ->get();
+
         return view('player-result', [
             'player' => $player,
             'insights' => $insights,
             'recommendations' => $recommendations,
+            'suggestions' => $suggestions,
             'lastFetchedAt' => $result['last_fetched_at'],
             'source' => $result['source'],
         ]);
