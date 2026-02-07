@@ -439,47 +439,59 @@
 
             <!-- LEFT COLUMN: UPGRADE PRIORITY -->
             <div class="lg:col-span-1 space-y-8">
-                <section class="space-y-4">
+                <section class="space-y-6">
                     <h2 class="text-xl font-black flex items-center gap-3 px-1">
-                        <span class="w-2 h-6 bg-red-500 rounded-full"></span>
-                        PRIORITAS UPGRADE
+                        <span class="w-2 h-6 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.5)]"></span>
+                        REKOMENDASI UPGRADE
                     </h2>
-                    <div class="space-y-3">
-                        @foreach($recommendations as $rec)
-                            <div
-                                class="glass-card p-5 rounded-2xl border-l-4 border-l-{{ $rec['color'] }}-500 transition-transform hover:scale-[1.02] cursor-default">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span
-                                        class="text-[10px] font-black uppercase tracking-widest text-slate-500">{{ $rec['type'] }}</span>
-                                    <span
-                                        class="text-[10px] font-black px-2 py-0.5 rounded-lg bg-{{ $rec['color'] }}-500/10 text-{{ $rec['color'] }}-500 border border-{{ $rec['color'] }}-500/20">
-                                        {{ $rec['priority'] }}
-                                    </span>
-                                </div>
-                                <h4 class="font-bold text-slate-200 mb-1">{{ $rec['name'] }}</h4>
-                                <p class="text-[11px] text-slate-500 leading-relaxed">{{ $rec['reason'] }}</p>
-                            </div>
-                        @endforeach
 
-                        @if(isset($insights['strategy']['gearPriorities']) && count($insights['strategy']['gearPriorities']) > 0)
-                            <div class="mt-8 space-y-4">
-                                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                                    GEAR UPGRADE PRIORITY
-                                </h3>
-                                @foreach($insights['strategy']['gearPriorities'] as $gp)
-                                    <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 relative overflow-hidden group">
-                                        <div class="absolute -right-4 -top-4 w-12 h-12 bg-indigo-500/10 rounded-full blur-xl group-hover:bg-indigo-500/20 transition-all"></div>
-                                        <div class="flex justify-between items-start mb-2">
-                                            <h4 class="font-bold text-indigo-300">{{ $gp['name'] }}</h4>
-                                            <span class="text-[9px] font-black px-2 py-0.5 rounded-lg bg-indigo-500 text-white shadow-lg">{{ $gp['rank'] }}</span>
-                                        </div>
-                                        <p class="text-[10px] text-slate-400 leading-relaxed">{{ $gp['reason'] }}</p>
+                    <!-- 1. HERO SECTION -->
+                    @if(count($recommendations['heroes']) > 0)
+                        <div class="space-y-3">
+                            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Upgrade Hero</h3>
+                            @foreach($recommendations['heroes'] as $rec)
+                                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-red-500 transition-all hover:translate-x-1">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h4 class="font-bold text-slate-200">{{ $rec['name'] }}</h4>
+                                        <span class="text-[9px] font-black px-2 py-0.5 rounded-lg bg-red-500/10 text-red-500">{{ $rec['priority'] }}</span>
                                     </div>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
+                                    <p class="text-[11px] text-slate-500 leading-relaxed">{{ $rec['reason'] }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- 2. GEAR SECTION -->
+                    @if(isset($insights['strategy']['gearPriorities']) && count($insights['strategy']['gearPriorities']) > 0)
+                        <div class="space-y-3">
+                            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Upgrade Equipment</h3>
+                            @foreach($insights['strategy']['gearPriorities'] as $gp)
+                                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-indigo-500 transition-all hover:translate-x-1">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h4 class="font-bold text-indigo-300">{{ $gp['name'] }}</h4>
+                                        <span class="text-[9px] font-black px-2 py-0.5 rounded-lg bg-indigo-500 text-white shadow-lg">{{ $gp['rank'] }}</span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 leading-relaxed">{{ $gp['reason'] }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- 3. TROOPS & SPELLS SECTION -->
+                    @if(count($recommendations['troops']) > 0 || count($recommendations['spells']) > 0)
+                        <div class="space-y-3">
+                            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Upgrade Pasukan & Mantra</h3>
+                            @foreach(array_merge($recommendations['troops'], $recommendations['spells']) as $rec)
+                                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-amber-500 transition-all hover:translate-x-1">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h4 class="font-bold text-slate-200">{{ $rec['name'] }}</h4>
+                                        <span class="text-[9px] font-black px-2 py-0.5 rounded-lg bg-amber-500/10 text-amber-500">{{ $rec['priority'] ?? 'Penting' }}</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-500 leading-relaxed">{{ $rec['reason'] }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </section>
 
             </div>

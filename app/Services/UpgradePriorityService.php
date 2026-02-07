@@ -10,12 +10,10 @@ class UpgradePriorityService
     public function getPriorities(array $player, array $insights): array
     {
         $th = $player['townHallLevel'] ?? 1;
-        $priorities = [];
 
-        // 1. HERO PRIORITIES (Always critical if not maxed)
+        $heroPriorities = [];
         foreach (collect($insights['heroOrder'])->take(2) as $h) {
-            $priorities[] = [
-                'type' => 'HERO',
+            $heroPriorities[] = [
                 'name' => $h['name'],
                 'priority' => 'Tinggi',
                 'reason' => "Hero ini adalah tulang punggung strategi di TH{$th}. Fokus ke level " . ($h['level'] + 1) . ".",
@@ -23,13 +21,11 @@ class UpgradePriorityService
             ];
         }
 
-        // 2. TROOP PRIORITIES (Contextual)
-        $priorities = array_merge($priorities, $this->getTroopPriorities($th, $insights['troops']['list']));
-
-        // 3. SPELL PRIORITIES
-        $priorities = array_merge($priorities, $this->getSpellPriorities($th, $insights['spells']['list']));
-
-        return array_slice($priorities, 0, 5);
+        return [
+            'heroes' => $heroPriorities,
+            'troops' => $this->getTroopPriorities($th, $insights['troops']['list']),
+            'spells' => $this->getSpellPriorities($th, $insights['spells']['list'])
+        ];
     }
 
     private function getTroopPriorities(int $th, array $troopList): array
