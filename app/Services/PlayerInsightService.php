@@ -57,6 +57,14 @@ class PlayerInsightService
             'spells' => $spellData,
             'heroes' => $heroData,
             'equipment' => $equipmentData,
+            'playerStats' => [
+                'level' => $player['expLevel'] ?? 0,
+                'warStars' => $player['warStars'] ?? 0,
+                'attackWins' => $player['attackWins'] ?? 0,
+                'defenseWins' => $player['defenseWins'] ?? 0,
+                'trophies' => $player['trophies'] ?? 0,
+                'bestTrophies' => $player['bestTrophies'] ?? 0,
+            ]
         ];
     }
 
@@ -243,11 +251,24 @@ class PlayerInsightService
         if ($filtered->isEmpty())
             return ['score' => 0, 'list' => []];
 
-        $list = $filtered->map(function ($e) {
+        $epicEquipment = [
+            'Giant Gauntlet',
+            'Frozen Arrow',
+            'Fireball',
+            'Spiky Ball',
+            'Magic Mirror',
+            'Rocket Spear',
+            'Electro Boots'
+        ];
+
+        $list = $filtered->map(function ($e) use ($epicEquipment) {
+            $isEpic = in_array($e['name'], $epicEquipment);
             return [
                 'name' => $e['name'],
                 'level' => $e['level'],
                 'maxLevel' => $e['maxLevel'],
+                'isEpic' => $isEpic,
+                'rarity' => $isEpic ? 'Epic' : 'Common',
                 'isMax' => $e['level'] >= $e['maxLevel'],
                 'progress' => round(($e['level'] / max(1, $e['maxLevel'])) * 100),
             ];
