@@ -137,9 +137,9 @@
             </div>
 
             <div class="relative z-10">
-                <h2 class="text-2xl font-black mb-2 text-white">Saran & Masukan</h2>
+                <h2 class="text-2xl font-black mb-2 text-white">Hubungi Developer</h2>
                 <p class="text-gray-400 text-sm mb-8 leading-relaxed">Punya ide fitur baru atau menemukan bug? Beritahu
-                    kami untuk membuat platform ini jadi lebih baik!</p>
+                    pengembang untuk membuat platform ini jadi lebih baik!</p>
 
                 @if(session('success'))
                     <div
@@ -150,27 +150,38 @@
 
                 <form action="{{ route('suggestions.store') }}" method="POST" class="space-y-4">
                     @csrf
-                    <div class="grid grid-cols-1 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label
+                                class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5 ml-1">Tag
+                                CoC Anda (Wajib)</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-600 font-bold text-xs">#</span>
+                                <input type="text" name="tag_id" required placeholder="P8Y28RRLL"
+                                    class="w-full bg-slate-900/50 border border-white/5 rounded-xl py-3 pl-7 pr-4 outline-none focus:ring-2 focus:ring-orange-500 transition-all text-xs uppercase font-mono">
+                            </div>
+                        </div>
                         <div>
                             <label
                                 class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5 ml-1">Nama
                                 (Opsional)</label>
                             <input type="text" name="name" placeholder="Siapa nama Anda?"
-                                class="w-full bg-slate-900/50 border border-white/5 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm">
+                                class="w-full bg-slate-900/50 border border-white/5 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-orange-500 transition-all text-xs">
                         </div>
-                        <div>
-                            <label
-                                class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5 ml-1">Saran
-                                Anda</label>
-                            <textarea name="suggestion" rows="4" required
-                                placeholder="Tuliskan saran atau masukan Anda di sini..."
-                                class="w-full bg-slate-900/50 border border-white/5 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm resize-none"></textarea>
-                        </div>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5 ml-1">Pesan
+                            / Saran</label>
+                        <textarea name="suggestion" rows="4" required
+                            placeholder="Tuliskan ide fitur baru, laporan bug, atau saran lainnya..."
+                            class="w-full bg-slate-900/50 border border-white/5 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-orange-500 transition-all text-xs resize-none"></textarea>
                     </div>
 
                     <button type="submit"
                         class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black py-4 rounded-xl shadow-lg transition-all active:scale-[0.98] uppercase tracking-wider text-xs">
-                        Kirim Masukan
+                        Kirim Masukan Ke Developer
                     </button>
                 </form>
             </div>

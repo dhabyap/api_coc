@@ -18,14 +18,14 @@ class SuggestionController extends Controller
         $tagId = str_replace('#', '', $request->tag_id);
         $ip = $request->ip();
 
-        // Spam Protection: Max 3 per Tag + IP per day
+        // Spam Protection: Max 3 per Sender Tag + IP per day
         $todayCount = Suggestion::where('tag_id', $tagId)
             ->where('ip_address', $ip)
             ->whereDate('created_at', now()->toDateString())
             ->count();
 
         if ($todayCount >= 3) {
-            return back()->with('error', 'Maaf, Anda sudah mengirimkan terlalu banyak saran untuk player ini hari ini. Silakan coba lagi besok.');
+            return back()->with('error', 'Maaf, Anda sudah mengirimkan terlalu banyak masukan hari ini. Silakan coba lagi besok.');
         }
 
         Suggestion::create([

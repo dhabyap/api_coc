@@ -200,6 +200,98 @@
             </div>
         </div>
 
+        <!-- API DATA COLLECTIONS: TROOPS, SPELLS, GEAR, HEROES -->
+        <section class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Detailed Troops -->
+                <div class="lg:col-span-2 glass-card rounded-3xl p-6 h-[400px] flex flex-col">
+                    <h3
+                        class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                        TROOPS COLLECTION
+                    </h3>
+                    <div
+                        class="flex-grow overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 gap-2 content-start">
+                        @foreach($insights['troops']['list'] as $troop)
+                            <div
+                                class="flex justify-between items-center p-3 rounded-xl bg-slate-900/30 border border-slate-800/30">
+                                <span class="text-[11px] font-bold text-slate-400">{{ $troop['name'] }}</span>
+                                <span
+                                    class="text-[10px] font-mono {{ $troop['status'] == 'MAX' ? 'text-green-500' : 'text-slate-600' }}">
+                                    Lv {{ $troop['level'] }} / {{ $troop['maxLevel'] }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Hero Status (API Data) -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col h-[400px]">
+                    <h3
+                        class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                        HERO STATUS
+                    </h3>
+                    <div class="space-y-5 overflow-y-auto custom-scrollbar pr-2">
+                        @foreach($insights['heroes']['list'] as $hero)
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-slate-300">{{ $hero['name'] }}</span>
+                                    <span class="text-[10px] font-mono text-slate-500">Lv {{ $hero['level'] }} /
+                                        {{ $hero['maxLevel'] }}</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                    <div class="h-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.3)]"
+                                        style="width: {{ ($hero['level'] / $hero['maxLevel']) * 100 }}%"></div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Spells -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col h-[200px]">
+                    <h3
+                        class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                        SPELLS
+                    </h3>
+                    <div class="overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+                        @foreach($insights['spells']['list'] as $spell)
+                            <div class="flex justify-between text-[10px] border-b border-slate-800/50 pb-1.5">
+                                <span class="text-slate-500">{{ $spell['name'] }}</span>
+                                <span class="text-blue-500 font-bold">Lv {{ $spell['level'] }} /
+                                    {{ $spell['maxLevel'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <!-- Equipment -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col h-[200px]">
+                    <h3
+                        class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                        COLLECTED GEAR
+                    </h3>
+                    <div class="overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+                        @foreach($insights['equipment']['list'] as $item)
+                            <div
+                                class="flex justify-between text-[10px] bg-slate-900/30 p-2 rounded-lg border border-slate-800/30">
+                                <span class="text-slate-500">{{ $item['name'] }}</span>
+                                <span class="text-purple-500 font-bold">Lv {{ $item['level'] }} /
+                                    {{ $item['maxLevel'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-slate-800 to-transparent my-4"></div>
+
+
         <!-- MAIN DASHBOARD -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -241,10 +333,44 @@
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: STRATEGY & DEEP DATA -->
+            <!-- RIGHT COLUMN: ANALYTICS & RECOMMENDATIONS -->
             <div class="lg:col-span-2 space-y-8">
+                <!-- Super Troop Suggestions -->
+                <div class="glass-card rounded-3xl p-6 border border-orange-500/10">
+                    <h3
+                        class="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        SUPER TROOP RECOMMENDATIONS
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        @forelse($insights['strategy']['superTroops'] as $st)
+                            <div class="flex items-center gap-4 bg-slate-900/30 p-3 rounded-2xl border border-slate-800/30">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-200">{{ $st['name'] }}</h4>
+                                    <p class="text-[9px] text-slate-600">{{ $st['reason'] }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-span-2 text-center py-4 text-xs text-slate-600 italic">Belum tersedia untuk
+                                level TH Anda.</div>
+                        @endforelse
+                    </div>
+                </div>
 
-                <!-- Strategy & Gear Recommendations -->
+                <!-- Strategy & Gear Recommendations (Moved Down) -->
                 <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Suggested War Strategy -->
                     <div class="glass-card rounded-3xl p-6 border border-blue-500/10">
@@ -280,8 +406,7 @@
                     <div class="glass-card rounded-3xl p-6 border border-purple-500/10">
                         <h3
                             class="text-xs font-black text-purple-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                            HERO EQUIPMENT SET
-                        </h3>
+                            HERO EQUIPMENT SET</h3>
                         <div class="space-y-4 max-h-[180px] overflow-y-auto custom-scrollbar pr-2">
                             @foreach($insights['strategy']['gear'] as $gear)
                                 <div class="bg-slate-900/40 p-3 rounded-2xl border border-slate-800/50">
@@ -295,116 +420,8 @@
                         </div>
                     </div>
                 </section>
-
-                <!-- Super Troop & Hero Status -->
-                <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Super Troop Suggestions -->
-                    <div class="glass-card rounded-3xl p-6">
-                        <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">SUPER TROOP
-                            RECOMMENDATIONS</h3>
-                        <div class="space-y-3">
-                            @forelse($insights['strategy']['superTroops'] as $st)
-                                <div
-                                    class="flex items-center gap-4 bg-slate-900/30 p-3 rounded-2xl border border-slate-800/30">
-                                    <div
-                                        class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-xs font-bold text-slate-200">{{ $st['name'] }}</h4>
-                                        <p class="text-[9px] text-slate-600">{{ $st['reason'] }}</p>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-4 text-xs text-slate-600 italic">Belum tersedia untuk level TH
-                                    Anda.</div>
-                            @endforelse
-                        </div>
-                    </div>
-
-                    <!-- Hero List (Compact) -->
-                    <div class="glass-card rounded-3xl p-6">
-                        <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">HERO STATUS
-                        </h3>
-                        <div class="space-y-4">
-                            @foreach($insights['heroes']['list'] as $hero)
-                                <div>
-                                    <div class="flex justify-between items-center mb-1.5">
-                                        <span class="text-xs font-bold text-slate-300">{{ $hero['name'] }}</span>
-                                        <span class="text-[10px] font-mono text-slate-500">Lv {{ $hero['level'] }} /
-                                            {{ $hero['maxLevel'] }}</span>
-                                    </div>
-                                    <div class="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                                        <div class="h-full bg-orange-500"
-                                            style="width: {{ ($hero['level'] / $hero['maxLevel']) * 100 }}%"></div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </section>
-
-                <!-- RAW DATA COLLECTIONS (BOTTOM) -->
-                <section class="space-y-6 pt-10 border-t border-slate-800/50">
-                    <h2 class="text-xs font-black text-slate-600 uppercase tracking-[0.3em] text-center italic">Detailed
-                        Collections</h2>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Detailed Troops -->
-                        <div class="glass-card rounded-3xl p-6 h-[350px] flex flex-col">
-                            <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4">TROOPS</h3>
-                            <div class="flex-grow overflow-y-auto custom-scrollbar pr-2 space-y-2">
-                                @foreach($insights['troops']['list'] as $troop)
-                                    <div
-                                        class="flex justify-between items-center p-3 rounded-xl bg-slate-900/30 border border-slate-800/30">
-                                        <span class="text-[11px] font-bold text-slate-400">{{ $troop['name'] }}</span>
-                                        <span
-                                            class="text-[10px] font-mono {{ $troop['status'] == 'MAX' ? 'text-green-500' : 'text-slate-600' }}">
-                                            Lv {{ $troop['level'] }} / {{ $troop['maxLevel'] }}
-                                        </span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <!-- Spells & Gear (Collapsible/Scroll) -->
-                        <div class="space-y-6">
-                            <div class="glass-card rounded-3xl p-6 flex flex-col h-[165px]">
-                                <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">SPELLS
-                                </h3>
-                                <div class="overflow-y-auto custom-scrollbar pr-2 space-y-2">
-                                    @foreach($insights['spells']['list'] as $spell)
-                                        <div
-                                            class="flex justify-between text-[10px] border-b border-slate-800 pb-1.5 last:border-0">
-                                            <span class="text-slate-500">{{ $spell['name'] }}</span>
-                                            <span class="text-blue-500 font-bold">Lv {{ $spell['level'] }} /
-                                                {{ $spell['maxLevel'] }}</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="glass-card rounded-3xl p-6 flex flex-col h-[160px]">
-                                <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">
-                                    COLLECTED GEAR</h3>
-                                <div class="overflow-y-auto custom-scrollbar pr-2 space-y-2">
-                                    @foreach($insights['equipment']['list'] as $item)
-                                        <div class="flex justify-between text-[10px] bg-slate-900/20 p-2 rounded-lg">
-                                            <span class="text-slate-500">{{ $item['name'] }}</span>
-                                            <span class="text-purple-500 font-bold">Lv {{ $item['level'] }} /
-                                                {{ $item['maxLevel'] }}</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
             </div>
+
         </div>
 
         <!-- SUGGESTIONS & FEEDBACK SECTION -->
@@ -413,14 +430,16 @@
                 <div>
                     <h2 class="text-2xl font-black flex items-center gap-3">
                         <span class="w-2 h-6 bg-blue-500 rounded-full"></span>
-                        SARAN & MASUKAN
+                        HUBUNGI DEVELOPER
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1">Berikan masukan untuk meningkatkan strategi player ini.</p>
+                    <p class="text-xs text-slate-500 mt-1">Berikan saran atau laporkan bug langsung kepada pengembang
+                        aplikasi.</p>
                 </div>
             </div>
 
             @if(session('success'))
-                <div class="bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-2xl text-xs font-bold animate-pulse">
+                <div
+                    class="bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-2xl text-xs font-bold animate-pulse">
                     {{ session('success') }}
                 </div>
             @endif
@@ -434,48 +453,70 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Suggestion List -->
                 <div class="space-y-4">
-                    <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Saran Terbaru</h3>
+                    <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Masukan Terbaru
+                    </h3>
                     <div class="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
                         @forelse($suggestions as $s)
                             <div class="glass-card p-4 rounded-2xl border-l-2 border-l-blue-500/50">
                                 <div class="flex justify-between items-start mb-2">
                                     <span class="text-xs font-black text-slate-200">{{ $s->name ?? 'Anonim' }}</span>
-                                    <span class="text-[9px] text-slate-600 font-mono">{{ $s->created_at->diffForHumans() }}</span>
+                                    <span
+                                        class="text-[9px] text-slate-600 font-mono">{{ $s->created_at->diffForHumans() }}</span>
                                 </div>
                                 <p class="text-[11px] text-slate-400 leading-relaxed italic">"{{ $s->suggestion }}"</p>
                             </div>
                         @empty
-                            <div class="text-center py-10 bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
-                                <p class="text-xs text-slate-600">Belum ada saran untuk player ini. <br> Jadilah yang pertama memberikan masukan!</p>
+                            <div
+                                class="text-center py-10 bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
+                                <p class="text-xs text-slate-600">Belum ada masukan untuk developer. <br> Jadilah yang
+                                    pertama memberikan ide atau laporan!</p>
                             </div>
                         @endforelse
                     </div>
                 </div>
 
-                <!-- Suggestion Form -->
+                <!-- Feedback Form -->
                 <div class="glass-card rounded-3xl p-6 border-t border-white/5">
-                    <h3 class="text-sm font-black text-white mb-6">Kirim Saran Baru</h3>
+                    <h3 class="text-sm font-black text-white mb-6">Kirim Masukan</h3>
                     <form action="{{ route('suggestions.store') }}" method="POST" class="space-y-4">
                         @csrf
-                        <input type="hidden" name="tag_id" value="{{ $player['tag'] }}">
-                        
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Nama (Opsional)</label>
-                            <input type="text" name="name" placeholder="Contoh: Master COC" 
-                                class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Tag
+                                    CoC Anda (Wajib)</label>
+                                <div class="relative">
+                                    <span
+                                        class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-600 font-bold text-xs">#</span>
+                                    <input type="text" name="tag_id" required placeholder="P8Y28RRLL"
+                                        class="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-2.5 pl-7 pr-4 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors uppercase font-mono">
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Nama
+                                    (Opsional)</label>
+                                <input type="text" name="name" placeholder="Contoh: Master COC"
+                                    class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors">
+                            </div>
                         </div>
 
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Saran Strategi</label>
-                            <textarea name="suggestion" required rows="4" placeholder="Tuliskan saran Anda di sini..."
+                            <label
+                                class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Pesan
+                                / Saran</label>
+                            <textarea name="suggestion" required rows="4"
+                                placeholder="Tuliskan ide fitur baru, laporan bug, atau saran lainnya..."
                                 class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors resize-none"></textarea>
                         </div>
 
-                        <button type="submit" 
+                        <button type="submit"
                             class="w-full bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-widest py-3.5 rounded-xl transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
-                            <span>Kirim Saran</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                            <span>Kirim Masukan Ke Developer</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path
+                                    d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                             </svg>
                         </button>
                     </form>
@@ -485,7 +526,8 @@
 
         <!-- Footer -->
         <footer class="pt-16 text-center">
-            <p class="text-[9px] text-slate-700 uppercase tracking-[0.4em] font-black">CoC Deep Insight System &bull; 2026</p>
+            <p class="text-[9px] text-slate-700 uppercase tracking-[0.4em] font-black">CoC Deep Insight System &bull;
+                2026</p>
         </footer>
     </div>
 </body>
