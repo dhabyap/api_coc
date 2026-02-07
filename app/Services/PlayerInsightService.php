@@ -169,16 +169,17 @@ class PlayerInsightService
             return ['readinessScore' => 0, 'list' => []];
 
         $list = $filtered->map(function ($t) use ($th) {
-            // Using the API provided maxLevel but ensuring we cap if needed (optional for troops as they vary wildly)
             $maxLevel = $t['maxLevel'];
+            $isMax = $t['level'] >= $maxLevel;
             return [
                 'name' => $t['name'],
                 'level' => $t['level'],
                 'maxLevel' => $maxLevel,
+                'isMax' => $isMax,
                 'progress' => round(($t['level'] / max(1, $maxLevel)) * 100),
-                'status' => $t['level'] >= $maxLevel ? 'MAX' : ($t['level'] >= $maxLevel * 0.8 ? 'DEKAT' : 'RENDAH')
+                'status' => $isMax ? 'MAX' : ($t['level'] >= $maxLevel * 0.8 ? 'DEKAT' : 'RENDAH')
             ];
-        })->values();
+        })->sortByDesc('isMax')->values();
 
         $totalProgress = $list->sum('progress');
         $readinessScore = $totalProgress / $list->count();
@@ -201,9 +202,10 @@ class PlayerInsightService
                 'name' => $s['name'],
                 'level' => $s['level'],
                 'maxLevel' => $maxLevel,
+                'isMax' => $s['level'] >= $maxLevel,
                 'progress' => round(($s['level'] / max(1, $maxLevel)) * 100),
             ];
-        })->values();
+        })->sortByDesc('isMax')->values();
 
         return [
             'readinessScore' => round($list->sum('progress') / $list->count()),
@@ -246,15 +248,16 @@ class PlayerInsightService
                 'name' => $e['name'],
                 'level' => $e['level'],
                 'maxLevel' => $e['maxLevel'],
+                'isMax' => $e['level'] >= $e['maxLevel'],
                 'progress' => round(($e['level'] / max(1, $e['maxLevel'])) * 100),
             ];
-        })->values();
+        })->sortByDesc('isMax')->values();
 
         $avgProgress = $list->sum('progress') / $list->count();
 
         return [
             'score' => round($avgProgress),
-            'list' => $list->sortByDesc('level')->values()->all()
+            'list' => $list->all()
         ];
     }
 

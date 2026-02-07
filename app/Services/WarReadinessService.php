@@ -36,40 +36,44 @@ class WarReadinessService
 
         if (!$warPref) {
             return [
-                'status' => 'NOT READY',
+                'status' => 'Opt Out',
                 'status_id' => 'not_ready',
                 'isReady' => false,
-                'reason' => 'Preferensi perang Anda sedang MATI (Opt Out).',
-                'label' => 'TIDAK SIAP'
+                'reason' => 'Anda memilih untuk TIDAK ikut War (Opt Out) di dalam game.',
+                'label' => 'OPT OUT (PASIF)'
             ];
         }
 
         if ($heroesReady && $troopsReady) {
             return [
-                'status' => 'WAR READY',
+                'status' => 'War Ready',
                 'status_id' => 'ready',
                 'isReady' => true,
-                'reason' => 'Hero dan pasukan Anda sudah dalam kondisi prima untuk War.',
-                'label' => 'SIAP PERANG'
+                'reason' => 'Hero dan Pasukan Utama Anda sudah sesuai standar Operasional War untuk TH' . $th . '.',
+                'label' => 'SIAP TEMPUR'
             ];
         }
 
         if ($heroesReady || $troopsReady) {
+            $reason = $heroesReady
+                ? 'Hero Anda sudah kuat, namun level Pasukan Utama masih di bawah standar War TH' . $th . '.'
+                : 'Pasukan Anda sudah kuat, namun level Hero masih terlalu rendah untuk War TH' . $th . '.';
+
             return [
-                'status' => 'SEMI READY',
+                'status' => 'Semi Ready',
                 'status_id' => 'semi_ready',
                 'isReady' => false,
-                'reason' => $heroesReady ? 'Hero siap, tapi pasukan utama masih perlu ditingkatkan.' : 'Pasukan siap, tapi Hero masih terlalu rendah.',
-                'label' => 'SEMI SIAP'
+                'reason' => $reason,
+                'label' => 'SEMI-SIAP (RISIKO)'
             ];
         }
 
         return [
-            'status' => 'NOT READY',
+            'status' => 'Not Ready',
             'status_id' => 'not_ready',
             'isReady' => false,
-            'reason' => 'Level Hero dan pasukan masih jauh dari standar operasional War.',
-            'label' => 'TIDAK SIAP'
+            'reason' => 'Level Hero dan Pasukan Utama masih jauh di bawah standar untuk melakukan serangan War yang efektif.',
+            'label' => 'BELUM SIAP'
         ];
     }
 }

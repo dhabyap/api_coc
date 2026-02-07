@@ -84,118 +84,94 @@
         </div>
 
         <!-- HERO SECTION: PROFILE SUMMARY -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Basic Profile (Redesigned for Screenshot-able Look) -->
-            <div class="lg:col-span-2 relative overflow-hidden rounded-3xl group">
-                <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-slate-900 to-slate-900 z-0"></div>
-                <div
-                    class="absolute -top-24 -right-24 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl group-hover:bg-orange-500/20 transition-all duration-700">
-                </div>
+        <div class="space-y-6">
+            <!-- Basic Profile -->
+            <div class="relative overflow-hidden rounded-3xl group glass-card">
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-slate-900 to-slate-900 z-0"></div>
 
                 <div class="relative z-10 p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 shine">
                     <div class="relative shrink-0">
                         <div
-                            class="w-28 h-28 bg-gradient-to-br from-orange-400 to-red-600 rounded-[2rem] flex items-center justify-center text-6xl font-black text-white shadow-[0_0_40px_rgba(234,88,12,0.3)] transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+                            class="w-24 h-24 bg-gradient-to-br from-orange-400 to-red-600 rounded-[2rem] flex items-center justify-center text-5xl font-black text-white shadow-[0_0_30px_rgba(234,88,12,0.3)] transform -rotate-3">
                             {{ $player['townHallLevel'] }}
                         </div>
                         <div
-                            class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl border-2 border-slate-900">
+                            class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border-2 border-slate-900">
                             TH {{ $player['townHallLevel'] }}
                         </div>
                     </div>
 
                     <div class="text-center md:text-left">
-                        <div class="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-                            <h1
-                                class="text-4xl md:text-6xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
-                                {{ $player['name'] }}
-                            </h1>
-                            @if($insights['health']['score'] >= 90)
-                                <div
-                                    class="inline-flex items-center gap-1 bg-yellow-400 text-slate-900 px-3 py-1 rounded-full text-[10px] font-black uppercase self-center md:self-auto animate-bounce mt-2 md:mt-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path
-                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                    ELITE PLAYER
-                                </div>
-                            @endif
-                        </div>
-
-                        <p
-                            class="text-orange-500 font-mono text-xl font-bold mb-6 tracking-[0.2em] flex items-center justify-center md:justify-start gap-2">
+                        <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-white mb-1">
+                            {{ $player['name'] }}
+                        </h1>
+                        <p class="text-orange-500 font-mono text-lg font-bold mb-4 tracking-[0.2em]">
                             <span class="opacity-50">#</span>{{ $player['tag'] }}
                         </p>
-
-                        <div class="flex flex-wrap justify-center md:justify-start gap-3">
+                        <div class="flex flex-wrap justify-center md:justify-start gap-2">
                             @if(isset($player['clan']))
                                 <div
-                                    class="flex items-center gap-3 bg-white/5 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-white/10 shadow-lg">
-                                    <div class="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]">
-                                    </div>
-                                    <span
-                                        class="text-sm font-bold text-slate-200 uppercase tracking-tight">{{ $player['clan']['name'] }}</span>
+                                    class="bg-white/5 px-4 py-1.5 rounded-xl border border-white/10 text-[10px] font-bold uppercase">
+                                    {{ $player['clan']['name'] }}
                                 </div>
                             @endif
                             <div
-                                class="bg-indigo-500/10 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-indigo-500/20 shadow-lg">
-                                <span
-                                    class="text-xs font-black text-indigo-400 uppercase tracking-widest">{{ $player['league']['name'] ?? 'NO LEAGUE' }}</span>
+                                class="bg-indigo-500/10 px-4 py-1.5 rounded-xl border border-indigo-500/20 text-[10px] font-black uppercase text-indigo-400">
+                                {{ $player['league']['name'] ?? 'NO LEAGUE' }}
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- High Progress Motivational Text -->
-                @if($insights['health']['score'] >= 90)
-                    <div
-                        class="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-yellow-500/20 via-transparent to-yellow-500/20 py-2 border-t border-yellow-500/10">
-                        <p
-                            class="text-[10px] text-center font-black text-yellow-500 uppercase tracking-[0.3em] animate-pulse">
-                            @php
-                                $quotes = [
-                                    "Master Strategi Sejati! Akun Anda hampir mencapai puncak kejayaan!",
-                                    "Luar Biasa! Pertahanan dan Pasukan Anda adalah mimpi buruk lawan!",
-                                    "Aura Juara! Tinggal selangkah lagi menuju Max Out sempurna!",
-                                    "Inspirasi Clan! Statistik Anda menunjukkan dedikasi level tinggi!"
-                                ];
-                                echo $quotes[array_rand($quotes)];
-                            @endphp
-                        </p>
-                    </div>
-                @endif
             </div>
 
-            <!-- War Readiness Card (Styled as a supporting badge) -->
-            <div
-                class="glass-card rounded-3xl p-8 flex flex-col justify-between border-t border-white/5 relative overflow-hidden shine">
-                <div
-                    class="absolute -top-10 -right-10 w-32 h-32 bg-{{ $insights['warReadiness']['status_id'] == 'ready' ? 'green' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'amber' : 'red') }}-500/10 blur-3xl">
+            <!-- Stats Grid: Health, War, Rush -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Account Health -->
+                <div class="glass-card rounded-3xl p-6 border-b-4 border-b-blue-500 relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-blue-500/10 blur-3xl"></div>
+                    <p class="text-slate-500 text-[9px] uppercase font-black tracking-widest mb-4">Account Health</p>
+                    <div class="flex items-end gap-2 mb-2">
+                        <span
+                            class="text-5xl font-black text-white leading-none">{{ $insights['health']['score'] }}%</span>
+                    </div>
+                    <p class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4">
+                        {{ $insights['health']['status'] }}</p>
+                    <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                            style="width:{{ $insights['health']['score'] }}%"></div>
+                    </div>
                 </div>
 
-                <div>
-                    <div class="flex justify-between items-start mb-4">
-                        <p class="text-slate-500 text-[10px] uppercase font-bold tracking-[0.2em]">War Status</p>
-                        <div
-                            class="w-2 h-2 rounded-full bg-{{ $insights['warReadiness']['status_id'] == 'ready' ? 'green' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'amber' : 'red') }}-500 animate-ping">
-                        </div>
+                <!-- War Readiness -->
+                <div
+                    class="glass-card rounded-3xl p-6 border-b-4 border-b-{{ $insights['warReadiness']['status_id'] == 'ready' ? 'green' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'amber' : 'red') }}-500 relative overflow-hidden">
+                    <div
+                        class="absolute -top-10 -right-10 w-24 h-24 bg-{{ $insights['warReadiness']['status_id'] == 'ready' ? 'green' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'amber' : 'red') }}-500/10 blur-3xl">
                     </div>
+                    <p class="text-slate-500 text-[9px] uppercase font-black tracking-widest mb-4">War Status</p>
                     <h3
-                        class="text-4xl font-black leading-none mb-2 tracking-tighter {{ $insights['warReadiness']['status_id'] == 'ready' ? 'text-green-500' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'text-amber-500' : 'text-red-500') }}">
+                        class="text-2xl font-black text-{{ $insights['warReadiness']['status_id'] == 'ready' ? 'green' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? 'amber' : 'red') }}-500 uppercase mb-2">
                         {{ $insights['warReadiness']['label'] }}
                     </h3>
-                    <p class="text-[11px] text-slate-400 leading-relaxed font-medium mt-4 line-clamp-3">
+                    <p class="text-[10px] text-slate-400 leading-relaxed min-h-[3rem]">
                         {{ $insights['warReadiness']['reason'] }}
                     </p>
                 </div>
 
-                <div class="mt-8 pt-4 border-t border-slate-800/50">
-                    <div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-500">
-                        <span>Readiness Level</span>
-                        <span
-                            class="text-white">{{ $insights['warReadiness']['status_id'] == 'ready' ? '100%' : ($insights['warReadiness']['status_id'] == 'semi_ready' ? '75%' : '40%') }}</span>
+                <!-- Rush Status -->
+                <div
+                    class="glass-card rounded-3xl p-6 border-b-4 border-b-{{ $insights['rush']['isRushed'] ? 'red' : 'green' }}-500 relative overflow-hidden">
+                    <div
+                        class="absolute -top-10 -right-10 w-24 h-24 bg-{{ $insights['rush']['isRushed'] ? 'red' : 'green' }}-500/10 blur-3xl">
                     </div>
+                    <p class="text-slate-500 text-[9px] uppercase font-black tracking-widest mb-4">Account Status</p>
+                    <h3
+                        class="text-2xl font-black text-{{ $insights['rush']['isRushed'] ? 'red' : 'green' }}-500 uppercase mb-2">
+                        {{ $insights['rush']['status'] }}
+                    </h3>
+                    <p class="text-[10px] text-slate-400 leading-relaxed min-h-[3rem]">
+                        {{ count($insights['rush']['reasons']) > 0 ? $insights['rush']['reasons'][0] : 'Akun Anda dalam kondisi perkembangan yang seimbang.' }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -214,10 +190,16 @@
                         class="flex-grow overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 gap-2 content-start">
                         @foreach($insights['troops']['list'] as $troop)
                             <div
-                                class="flex justify-between items-center p-3 rounded-xl bg-slate-900/30 border border-slate-800/30">
-                                <span class="text-[11px] font-bold text-slate-400">{{ $troop['name'] }}</span>
+                                class="flex justify-between items-center p-3 rounded-xl {{ $troop['isMax'] ? 'bg-orange-500/10 border-orange-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all hover:bg-slate-900/50">
                                 <span
-                                    class="text-[10px] font-mono {{ $troop['status'] == 'MAX' ? 'text-green-500' : 'text-slate-600' }}">
+                                    class="text-[11px] font-bold {{ $troop['isMax'] ? 'text-orange-400' : 'text-slate-400' }}">
+                                    {{ $troop['name'] }}
+                                    @if($troop['isMax'])
+                                        <span class="ml-1 text-[8px] bg-orange-500 text-white px-1 rounded-sm">MAX</span>
+                                    @endif
+                                </span>
+                                <span
+                                    class="text-[10px] font-mono {{ $troop['isMax'] ? 'text-orange-500' : 'text-slate-600' }}">
                                     Lv {{ $troop['level'] }} / {{ $troop['maxLevel'] }}
                                 </span>
                             </div>
@@ -236,13 +218,19 @@
                         @foreach($insights['heroes']['list'] as $hero)
                             <div>
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-bold text-slate-300">{{ $hero['name'] }}</span>
+                                    <span
+                                        class="text-xs font-bold {{ (isset($hero['isMax']) && $hero['isMax']) || $hero['level'] >= $hero['maxLevel'] ? 'text-orange-400' : 'text-slate-300' }}">
+                                        {{ $hero['name'] }}
+                                        @if($hero['level'] >= $hero['maxLevel'])
+                                            <span class="ml-1 text-[8px] bg-orange-500 text-white px-1 rounded-sm">MAX</span>
+                                        @endif
+                                    </span>
                                     <span class="text-[10px] font-mono text-slate-500">Lv {{ $hero['level'] }} /
                                         {{ $hero['maxLevel'] }}</span>
                                 </div>
                                 <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
-                                    <div class="h-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.3)]"
-                                        style="width: {{ ($hero['level'] / $hero['maxLevel']) * 100 }}%"></div>
+                                    <div class="h-full {{ $hero['level'] >= $hero['maxLevel'] ? 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)]' : 'bg-slate-600' }}"
+                                        style="width: {{ ($hero['level'] / max(1, $hero['maxLevel'])) * 100 }}%"></div>
                                 </div>
                             </div>
                         @endforeach
@@ -252,35 +240,50 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Spells -->
-                <div class="glass-card rounded-3xl p-6 flex flex-col h-[200px]">
+                <div class="glass-card rounded-3xl p-6 flex flex-col min-h-[300px]">
                     <h3
                         class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                        SPELLS
+                        SPELL COLLECTIONS
                     </h3>
-                    <div class="overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+                    <div class="overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                         @foreach($insights['spells']['list'] as $spell)
-                            <div class="flex justify-between text-[10px] border-b border-slate-800/50 pb-1.5">
-                                <span class="text-slate-500">{{ $spell['name'] }}</span>
-                                <span class="text-blue-500 font-bold">Lv {{ $spell['level'] }} /
+                            <div
+                                class="flex justify-between items-center p-3 rounded-xl {{ $spell['isMax'] ? 'bg-blue-500/10 border-blue-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all text-xs">
+                                <span class="{{ $spell['isMax'] ? 'text-blue-400 font-bold' : 'text-slate-400' }}">
+                                    {{ $spell['name'] }}
+                                    @if($spell['isMax'])
+                                        <span
+                                            class="ml-1 text-[8px] bg-blue-500 text-white px-1 rounded-sm uppercase">Max</span>
+                                    @endif
+                                </span>
+                                <span class="font-mono {{ $spell['isMax'] ? 'text-blue-500' : 'text-slate-600' }}">Lv
+                                    {{ $spell['level'] }} /
                                     {{ $spell['maxLevel'] }}</span>
                             </div>
                         @endforeach
                     </div>
                 </div>
                 <!-- Equipment -->
-                <div class="glass-card rounded-3xl p-6 flex flex-col h-[200px]">
+                <div class="glass-card rounded-3xl p-6 flex flex-col min-h-[300px]">
                     <h3
                         class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                        COLLECTED GEAR
+                        COLLECTED GEAR (MAX AT TOP)
                     </h3>
-                    <div class="overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+                    <div class="overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                         @foreach($insights['equipment']['list'] as $item)
                             <div
-                                class="flex justify-between text-[10px] bg-slate-900/30 p-2 rounded-lg border border-slate-800/30">
-                                <span class="text-slate-500">{{ $item['name'] }}</span>
-                                <span class="text-purple-500 font-bold">Lv {{ $item['level'] }} /
+                                class="flex justify-between items-center p-3 rounded-xl {{ $item['isMax'] ? 'bg-purple-500/10 border-purple-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all text-xs">
+                                <span class="{{ $item['isMax'] ? 'text-purple-400 font-bold' : 'text-slate-400' }}">
+                                    {{ $item['name'] }}
+                                    @if($item['isMax'])
+                                        <span
+                                            class="ml-1 text-[8px] bg-purple-500 text-white px-1 rounded-sm uppercase">Max</span>
+                                    @endif
+                                </span>
+                                <span class="font-mono {{ $item['isMax'] ? 'text-purple-500' : 'text-slate-600' }}">Lv
+                                    {{ $item['level'] }} /
                                     {{ $item['maxLevel'] }}</span>
                             </div>
                         @endforeach
@@ -321,16 +324,6 @@
                     </div>
                 </section>
 
-                <!-- Health Summary -->
-                <div
-                    class="glass-card rounded-3xl p-6 text-center border-b-4 border-b-blue-600 bg-gradient-to-t from-blue-600/5 to-transparent">
-                    <p class="text-[10px] text-slate-500 uppercase font-black tracking-[0.2em] mb-4">Overall Account
-                        Health</p>
-                    <div class="text-6xl font-black text-white mb-2">{{ $insights['health']['score'] }}%</div>
-                    <div class="text-sm font-bold text-blue-400 uppercase tracking-widest">
-                        {{ $insights['health']['status'] }}
-                    </div>
-                </div>
             </div>
 
             <!-- RIGHT COLUMN: ANALYTICS & RECOMMENDATIONS -->
