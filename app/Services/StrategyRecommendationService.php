@@ -14,7 +14,6 @@ class StrategyRecommendationService
         return [
             'strategy' => $this->getSuggestedStrategy($th, $insights),
             'gear' => $this->getGearRecommendations($player['heroes'] ?? []),
-            'gearPriorities' => $this->getGearUpgradePriorities($player['equipment'] ?? []),
             'superTroops' => $this->getSuperTroopSuggestions($th, $insights),
         ];
     }
@@ -61,46 +60,6 @@ class StrategyRecommendationService
         return $recs;
     }
 
-    private function getGearUpgradePriorities(array $equipment): array
-    {
-        $priorities = [];
-        $epicGears = collect($equipment)->where('maxLevel', '>=', 27);
-        $commonGears = collect($equipment)->where('maxLevel', '<', 27);
-
-        // Define meta rank for epic gear
-        $metaEpic = [
-            'Giant Gauntlet' => 'SSS (Wajib)',
-            'Frozen Arrow' => 'SS (Sangat Kuat)',
-            'Fireball' => 'S (Meta Baru)',
-            'Spiky Ball' => 'A (Bagus)',
-        ];
-
-        foreach ($epicGears as $eg) {
-            if ($eg['level'] < $eg['maxLevel']) {
-                $priorities[] = [
-                    'name' => $eg['name'],
-                    'rank' => $metaEpic[$eg['name']] ?? 'S',
-                    'reason' => 'Prioritas tertinggi karena stat pertumbuhan Epic jauh lebih besar dari Common.',
-                    'color' => 'indigo'
-                ];
-            }
-        }
-
-        // Top common gears
-        $topCommon = ['Eternal Tome', 'Invisibility Vial', 'Hog Rider Puppet', 'Rage Vial'];
-        foreach ($commonGears as $cg) {
-            if (in_array($cg['name'], $topCommon) && $cg['level'] < $cg['maxLevel']) {
-                $priorities[] = [
-                    'name' => $cg['name'],
-                    'rank' => 'A+',
-                    'reason' => 'Gear Common esensial yang wajib dimaksimalkan untuk menunjang performa Hero.',
-                    'color' => 'purple'
-                ];
-            }
-        }
-
-        return collect($priorities)->take(3)->all();
-    }
 
     private function getSuperTroopSuggestions(int $th, array $insights): array
     {

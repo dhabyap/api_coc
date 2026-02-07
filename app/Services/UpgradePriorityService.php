@@ -23,9 +23,53 @@ class UpgradePriorityService
 
         return [
             'heroes' => $heroPriorities,
+            'gear' => $this->getGearUpgradePriorities($insights['equipment']['list'] ?? []),
             'troops' => $this->getTroopPriorities($th, $insights['troops']['list']),
             'spells' => $this->getSpellPriorities($th, $insights['spells']['list'])
         ];
+    }
+
+    private function getGearUpgradePriorities(array $equipment): array
+    {
+        $priorities = [];
+        $equipment = collect($equipment);
+
+        $epicGears = $equipment->where('rarity', 'Epic');
+        $commonGears = $equipment->where('rarity', 'Common');
+
+        // Define meta rank for epic gear
+        $metaEpic = [
+            'Giant Gauntlet' => 'SSS (Wajib)',
+            'Frozen Arrow' => 'SS (Sangat Kuat)',
+            'Fireball' => 'S (Meta Baru)',
+            'Spiky Ball' => 'A (Bagus)',
+        ];
+
+        foreach ($epicGears as $eg) {
+            if (!$eg['isMax']) {
+                $priorities[] = [
+                    'name' => $eg['name'],
+                    'rank' => $metaEpic[$eg['name']] ?? 'S',
+                    'reason' => 'Prioritas tertinggi karena stat pertumbuhan Epic jauh lebih besar dari Common.',
+                    'color' => 'indigo'
+                ];
+            }
+        }
+
+        // Top common gears
+        $topCommon = ['Eternal Tome', 'Invisibility Vial', 'Hog Rider Puppet', 'Rage Vial'];
+        foreach ($commonGears as $cg) {
+            if (in_array($cg['name'], $topCommon) && !$cg['isMax']) {
+                $priorities[] = [
+                    'name' => $cg['name'],
+                    'rank' => 'A+',
+                    'reason' => 'Gear Common esensial yang wajib dimaksimalkan untuk menunjang performa Hero.',
+                    'color' => 'purple'
+                ];
+            }
+        }
+
+        return collect($priorities)->take(3)->all();
     }
 
     private function getTroopPriorities(int $th, array $troopList): array

@@ -462,10 +462,10 @@
                     @endif
 
                     <!-- 2. GEAR SECTION -->
-                    @if(isset($insights['strategy']['gearPriorities']) && count($insights['strategy']['gearPriorities']) > 0)
+                    @if(count($recommendations['gear']) > 0)
                         <div class="space-y-3">
                             <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Upgrade Equipment</h3>
-                            @foreach($insights['strategy']['gearPriorities'] as $gp)
+                            @foreach($recommendations['gear'] as $gp)
                                 <div class="glass-card p-4 rounded-2xl border-l-4 border-l-indigo-500 transition-all hover:translate-x-1">
                                     <div class="flex justify-between items-center mb-1">
                                         <h4 class="font-bold text-indigo-300">{{ $gp['name'] }}</h4>
