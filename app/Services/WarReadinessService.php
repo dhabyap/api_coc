@@ -39,6 +39,7 @@ class WarReadinessService
                 'status' => 'Opt Out',
                 'status_id' => 'not_ready',
                 'isReady' => false,
+                'color' => 'red',
                 'reason' => 'Anda memilih untuk TIDAK ikut War (Opt Out) di dalam game.',
                 'label' => 'OPT OUT (PASIF)'
             ];
@@ -49,6 +50,7 @@ class WarReadinessService
                 'status' => 'War Ready',
                 'status_id' => 'ready',
                 'isReady' => true,
+                'color' => 'green',
                 'reason' => 'Hero dan Pasukan Utama Anda sudah sesuai standar Operasional War untuk TH' . $th . '.',
                 'label' => 'SIAP TEMPUR'
             ];
@@ -63,6 +65,7 @@ class WarReadinessService
                 'status' => 'Semi Ready',
                 'status_id' => 'semi_ready',
                 'isReady' => false,
+                'color' => 'yellow',
                 'reason' => $reason,
                 'label' => 'SEMI-SIAP (RISIKO)'
             ];
@@ -72,6 +75,7 @@ class WarReadinessService
             'status' => 'Not Ready',
             'status_id' => 'not_ready',
             'isReady' => false,
+            'color' => 'red',
             'reason' => 'Level Hero dan Pasukan Utama masih jauh di bawah standar untuk melakukan serangan War yang efektif.',
             'label' => 'BELUM SIAP'
         ];

@@ -144,15 +144,19 @@ class PlayerInsightService
 
         $totalScore = ($heroScore * 0.5) + ($troopScore * 0.3) + ($spellScore * 0.2);
 
-        $status = 'Perlu Peningkatan';
-        if ($totalScore >= 85)
+        $color = 'red';
+        if ($totalScore >= 85) {
             $status = 'Sangat Baik';
-        elseif ($totalScore >= 65)
+            $color = 'green';
+        } elseif ($totalScore >= 65) {
             $status = 'Cukup Baik';
+            $color = 'yellow';
+        }
 
         return [
             'score' => round($totalScore),
             'status' => $status,
+            'color' => $color,
         ];
     }
 
