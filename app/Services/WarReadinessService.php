@@ -18,21 +18,10 @@ class WarReadinessService
         $warPref = ($player['warPreference'] ?? 'out') === 'in';
 
         $heroesReady = $heroData['averageProgress'] >= 80;
-        $troopsReady = $troopData['readinessScore'] >= 75;
+        $groundReady = ($troopData['groundScore'] ?? 0) >= 80;
+        $airReady = ($troopData['airScore'] ?? 0) >= 80;
 
-        // Specific rules for TH levels
-        if ($th >= 9) {
-            $king = collect($player['heroes'] ?? [])->where('name', 'Barbarian King')->first();
-            $queen = collect($player['heroes'] ?? [])->where('name', 'Archer Queen')->first();
-
-            if ($king && $queen) {
-                $avgHeroLevel = ($king['level'] + $queen['level']) / 2;
-                $expectedHeroLevel = ($th - 8) * 5 + 10; // Simple heuristic
-                if ($avgHeroLevel < $expectedHeroLevel * 0.7) {
-                    $heroesReady = false;
-                }
-            }
-        }
+        $isReady = $heroesReady && ($groundReady || $airReady);
 
         if (!$warPref) {
             return [
@@ -45,28 +34,25 @@ class WarReadinessService
             ];
         }
 
-        if ($heroesReady && $troopsReady) {
+        if ($isReady) {
+            $type = ($groundReady && $airReady) ? 'Darat & Udara' : ($groundReady ? 'Darat' : 'Udara');
             return [
                 'status' => 'War Ready',
                 'status_id' => 'ready',
                 'isReady' => true,
                 'color' => 'green',
-                'reason' => 'Hero dan Pasukan Utama Anda sudah sesuai standar Operasional War untuk TH' . $th . '.',
+                'reason' => "Hero dan Pasukan {$type} Anda sudah sesuai standar Operasional War untuk TH{$th}.",
                 'label' => 'SIAP TEMPUR'
             ];
         }
 
-        if ($heroesReady || $troopsReady) {
-            $reason = $heroesReady
-                ? 'Hero Anda sudah kuat, namun level Pasukan Utama masih di bawah standar War TH' . $th . '.'
-                : 'Pasukan Anda sudah kuat, namun level Hero masih terlalu rendah untuk War TH' . $th . '.';
-
+        if ($heroesReady) {
             return [
                 'status' => 'Semi Ready',
                 'status_id' => 'semi_ready',
                 'isReady' => false,
                 'color' => 'yellow',
-                'reason' => $reason,
+                'reason' => "Hero Anda sudah kuat, namun level Pasukan (Darat/Udara) masih di bawah standar War TH{$th}.",
                 'label' => 'SEMI-SIAP (RISIKO)'
             ];
         }
@@ -76,7 +62,7 @@ class WarReadinessService
             'status_id' => 'not_ready',
             'isReady' => false,
             'color' => 'red',
-            'reason' => 'Level Hero dan Pasukan Utama masih jauh di bawah standar untuk melakukan serangan War yang efektif.',
+            'reason' => "Level Hero dan Pasukan masih jauh di bawah standar untuk melakukan serangan War yang efektif di TH{$th}.",
             'label' => 'BELUM SIAP'
         ];
     }

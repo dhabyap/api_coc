@@ -277,7 +277,7 @@
                     </h3>
                     <div class="space-y-5 overflow-y-auto custom-scrollbar pr-2">
                         @foreach($insights['heroes']['list'] as $hero)
-                            <div>
+                            <div class="bg-slate-900/40 p-4 rounded-2xl border border-white/5">
                                 <div class="flex justify-between items-center mb-2">
                                     <span
                                         class="text-xs font-bold {{ (isset($hero['isMax']) && $hero['isMax']) || $hero['level'] >= $hero['maxLevel'] ? 'text-orange-400' : 'text-slate-300' }}">
@@ -289,10 +289,24 @@
                                     <span class="text-[10px] font-mono text-slate-500">Lv {{ $hero['level'] }} /
                                         {{ $hero['maxLevel'] }}</span>
                                 </div>
-                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden mb-3">
                                     <div class="h-full {{ $hero['level'] >= $hero['maxLevel'] ? 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)]' : 'bg-slate-600' }}"
                                         style="width: {{ ($hero['level'] / max(1, $hero['maxLevel'])) * 100 }}%"></div>
                                 </div>
+                                
+                                @if(isset($hero['activeEquipment']) && count($hero['activeEquipment']) > 0)
+                                    <div class="flex gap-2">
+                                        @foreach($hero['activeEquipment'] as $eq)
+                                            <div class="flex-grow flex items-center gap-1.5 bg-white/5 px-2 py-1.5 rounded-lg border border-white/10">
+                                                <div class="w-1 h-1 rounded-full bg-purple-500"></div>
+                                                <div class="flex-grow">
+                                                    <p class="text-[8px] font-black text-slate-300 leading-none truncate w-20">{{ $eq['name'] }}</p>
+                                                    <p class="text-[7px] font-mono text-slate-500 mt-0.5">Lv {{ $eq['level'] }}</p>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -338,28 +352,26 @@
                         @if($epicGear->count() > 0)
                             <div class="space-y-2">
                                 <div class="flex items-center gap-2 px-1">
-                                    <span class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em]">Epic
-                                        Equipment</span>
+                                    <span class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em]">Epic Equipment</span>
                                     <div class="h-px flex-grow bg-indigo-500/20"></div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
                                     @foreach($epicGear as $item)
-                                        <div
-                                            class="flex justify-between items-center p-3 rounded-xl border-indigo-500/50 bg-indigo-500/10 shadow-[inset_0_0_15px_rgba(99,102,241,0.2)] border transition-all text-xs">
-                                            <span class="flex items-center gap-1.5 text-indigo-400 font-black">
-                                                <svg class="w-3 h-3 text-indigo-400" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path
-                                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                                </svg>
-                                                {{ $item['name'] }}
-                                                @if($item['isMax'])
-                                                    <span
-                                                        class="text-[8px] bg-indigo-500 text-white px-1 rounded-sm uppercase">Max</span>
-                                                @endif
-                                            </span>
-                                            <span class="font-mono text-indigo-400/80">
-                                                Lv {{ $item['level'] }} / {{ $item['maxLevel'] }}
-                                            </span>
+                                        <div class="relative group p-2 rounded-xl {{ $item['isMax'] ? 'bg-indigo-500/10 border-indigo-400/40 shadow-lg' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all hover:bg-indigo-500/20">
+                                            @if($item['isMax'])
+                                                <div class="absolute -top-1.5 -right-1.5 z-10">
+                                                    <span class="bg-indigo-500 text-[6px] font-black text-white px-1.5 py-0.5 rounded-full uppercase shadow-lg">MAX</span>
+                                                </div>
+                                            @endif
+                                            <div class="flex flex-col items-center text-center">
+                                                <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-1.5">
+                                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                                    </svg>
+                                                </div>
+                                                <p class="text-[9px] font-black {{ $item['isMax'] ? 'text-indigo-400' : 'text-slate-400' }} tracking-tight leading-tight line-clamp-1 truncate w-full">{{ $item['name'] }}</p>
+                                                <p class="text-[8px] font-mono text-slate-500 mt-1">Lv {{ $item['level'] }}</p>
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>
@@ -371,25 +383,19 @@
                         @if($commonGear->count() > 0)
                             <div class="space-y-2">
                                 <div class="flex items-center gap-2 px-1">
-                                    <span class="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em]">Common
-                                        Equipment</span>
+                                    <span class="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em]">Common Equipment</span>
                                     <div class="h-px flex-grow bg-slate-800/50"></div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                                     @foreach($commonGear as $item)
-                                        <div
-                                            class="flex justify-between items-center p-3 rounded-xl {{ $item['isMax'] ? 'bg-purple-500/10 border-purple-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all text-xs">
-                                            <span
-                                                class="flex items-center gap-1.5 {{ $item['isMax'] ? 'text-purple-400 font-bold' : 'text-slate-400' }}">
-                                                {{ $item['name'] }}
-                                                @if($item['isMax'])
-                                                    <span
-                                                        class="text-[8px] bg-purple-500 text-white px-1 rounded-sm uppercase">Max</span>
-                                                @endif
-                                            </span>
-                                            <span class="font-mono {{ $item['isMax'] ? 'text-purple-500' : 'text-slate-600' }}">
-                                                Lv {{ $item['level'] }} / {{ $item['maxLevel'] }}
-                                            </span>
+                                        <div class="relative p-2 rounded-xl {{ $item['isMax'] ? 'bg-purple-500/10 border-purple-400/40 shadow-lg' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all text-center">
+                                            @if($item['isMax'])
+                                                <div class="absolute -top-1.5 -right-1.5 z-10">
+                                                    <span class="bg-purple-500 text-[6px] font-black text-white px-1.5 py-0.5 rounded-full uppercase">MAX</span>
+                                                </div>
+                                            @endif
+                                            <p class="text-[9px] font-bold {{ $item['isMax'] ? 'text-purple-400' : 'text-slate-500' }} leading-tight line-clamp-1 truncate w-full">{{ $item['name'] }}</p>
+                                            <p class="text-[8px] font-mono text-slate-600 mt-1">Lv {{ $item['level'] }}</p>
                                         </div>
                                     @endforeach
                                 </div>
@@ -449,19 +455,24 @@
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         @forelse($insights['strategy']['superTroops'] as $st)
-                            <div class="flex items-center gap-4 bg-slate-900/30 p-3 rounded-2xl border border-slate-800/30">
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                            <div class="flex items-center gap-4 bg-orange-500/10 p-3 rounded-2xl border border-orange-500/30 shadow-lg shadow-orange-500/5">
+                                <div class="relative">
+                                    <div class="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <span class="absolute -top-1 -right-1 flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                                    </span>
                                 </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-slate-200">{{ $st['name'] }}</h4>
-                                    <p class="text-[9px] text-slate-600">{{ $st['reason'] }}</p>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-center">
+                                        <h4 class="text-xs font-bold text-orange-400">{{ $st['name'] }}</h4>
+                                        <span class="text-[7px] font-black bg-orange-500 text-white px-1.5 py-0.5 rounded-full uppercase">MAX</span>
+                                    </div>
+                                    <p class="text-[9px] text-slate-500 mt-0.5">{{ $st['reason'] }}</p>
                                 </div>
                             </div>
                         @empty

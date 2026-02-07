@@ -46,7 +46,17 @@ class PlayerInsightService
             'heroOrder' => $heroOrder
         ]);
 
-        $evolution = $this->calculateEvolutionLabel($health['score'], $rushStatus['isRushed'], $warReadiness['status_id']);
+        $evolution = $this->calculateEvolutionLabel(
+            $health['score'],
+            $rushStatus['isRushed'],
+            $warReadiness['status_id'],
+            $player,
+            [
+                'heroes' => $heroData,
+                'troops' => $troopData,
+                'equipment' => $equipmentData
+            ]
+        );
 
         return [
             'health' => $health,
@@ -71,9 +81,17 @@ class PlayerInsightService
         ];
     }
 
-    private function calculateEvolutionLabel(int $score, bool $isRushed, string $warStatus): array
+    private function calculateEvolutionLabel(int $score, bool $isRushed, string $warStatus, array $player, array $insights): array
     {
-        if ($score >= 95 && !$isRushed && $warStatus === 'ready') {
+        // Agile parameters
+        $heroProg = $insights['heroes']['averageProgress'] ?? 0;
+        $gearProg = $insights['equipment']['score'] ?? 0;
+        $donationCount = $player['donations'] ?? 0;
+
+        // Final "Strategy Score" considers balance
+        $strategyScore = ($heroProg * 0.4) + ($score * 0.3) + ($gearProg * 0.2) + (min(100, $donationCount / 10) * 0.1);
+
+        if ($strategyScore >= 90 && !$isRushed && $warStatus === 'ready') {
             return [
                 'label' => 'CoC Elite',
                 'description' => 'Akun Sempurna! Anda adalah standar emas pemain strategis.',
@@ -82,7 +100,7 @@ class PlayerInsightService
             ];
         }
 
-        if ($score >= 85 && $warStatus === 'ready') {
+        if ($strategyScore >= 75 && $warStatus !== 'not_ready') {
             return [
                 'label' => 'War Veteran',
                 'description' => 'Siap Tempur! Anda memiliki fondasi kuat untuk segala jenis War.',
@@ -91,7 +109,7 @@ class PlayerInsightService
             ];
         }
 
-        if (!$isRushed || $score >= 65) {
+        if (!$isRushed || $strategyScore >= 50) {
             return [
                 'label' => 'Consistent Builder',
                 'description' => 'Pembangun Disiplin! Akun Anda berkembang dengan sangat seimbang.',
@@ -216,28 +234,40 @@ class PlayerInsightService
 
     private function analyzeTroops(array $troops, int $th): array
     {
+        $airTroops = ['Balloon', 'Dragon', 'Baby Dragon', 'Electro Dragon', 'Dragon Rider', 'Minion', 'Lava Hound', 'Ice Hound', 'Inferno Dragon', 'Super Dragon'];
+        $groundTroops = ['Barbarian', 'Archer', 'Giant', 'Goblin', 'Wall Breaker', 'Wizard', 'Healer', 'P.E.K.K.A', 'Golem', 'Valkyrie', 'Hog Rider', 'Bowler', 'Ice Golem', 'Yeti', 'Headhunter', 'Apprentice Warden', 'Root Rider', 'Miner'];
+
         $filtered = collect($troops)->filter(fn($t) => ($t['village'] ?? '') === 'home');
         if ($filtered->isEmpty())
-            return ['readinessScore' => 0, 'list' => []];
+            return ['readinessScore' => 0, 'list' => [], 'airScore' => 0, 'groundScore' => 0];
 
-        $list = $filtered->map(function ($t) use ($th) {
+        $list = $filtered->map(function ($t) use ($th, $airTroops, $groundTroops) {
             $maxLevel = $t['maxLevel'];
             $isMax = $t['level'] >= $maxLevel;
+            $type = in_array($t['name'], $airTroops) ? 'air' : (in_array($t['name'], $groundTroops) ? 'ground' : 'other');
+
             return [
                 'name' => $t['name'],
                 'level' => $t['level'],
                 'maxLevel' => $maxLevel,
                 'isMax' => $isMax,
+                'type' => $type,
                 'progress' => round(($t['level'] / max(1, $maxLevel)) * 100),
                 'status' => $isMax ? 'MAX' : ($t['level'] >= $maxLevel * 0.8 ? 'DEKAT' : 'RENDAH')
             ];
         })->sortByDesc('isMax')->values();
 
-        $totalProgress = $list->sum('progress');
-        $readinessScore = $totalProgress / $list->count();
+        $airList = $list->where('type', 'air');
+        $groundList = $list->where('type', 'ground');
+
+        $readinessScore = $list->avg('progress');
+        $airScore = $airList->isEmpty() ? 0 : $airList->avg('progress');
+        $groundScore = $groundList->isEmpty() ? 0 : $groundList->avg('progress');
 
         return [
             'readinessScore' => round($readinessScore),
+            'airScore' => round($airScore),
+            'groundScore' => round($groundScore),
             'list' => $list->all(),
         ];
     }
@@ -273,11 +303,22 @@ class PlayerInsightService
 
         $list = $homeHeroes->map(function ($h) use ($th) {
             $maxLevel = $this->getThMaxLevel('hero', $h['name'], $th, $h['maxLevel']);
+
+            // Extract active equipment
+            $activeEquipment = collect($h['equipment'] ?? [])->map(function ($e) {
+                return [
+                    'name' => $e['name'],
+                    'level' => $e['level'],
+                    'maxLevel' => $e['maxLevel']
+                ];
+            })->all();
+
             return [
                 'name' => $h['name'],
                 'level' => $h['level'],
                 'maxLevel' => $maxLevel,
                 'progress' => round(($h['level'] / max(1, $maxLevel)) * 100),
+                'activeEquipment' => $activeEquipment
             ];
         })->values();
 
