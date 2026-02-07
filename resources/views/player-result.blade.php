@@ -253,14 +253,14 @@
                             <div
                                 class="flex justify-between items-center p-3 rounded-xl {{ $troop['isMax'] ? 'bg-orange-500/10 border-orange-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all hover:bg-slate-900/50">
                                 <span
-                                    class="text-[11px] font-bold {{ $troop['isMax'] ? 'text-orange-400' : 'text-slate-400' }}">
+                                    class="text-[11px] font-bold {{ $troop['level'] >= $troop['maxLevel'] ? 'text-orange-400' : 'text-slate-400' }}">
                                     {{ $troop['name'] }}
-                                    @if($troop['isMax'])
+                                    @if($troop['level'] >= $troop['maxLevel'])
                                         <span class="ml-1 text-[8px] bg-orange-500 text-white px-1 rounded-sm">MAX</span>
                                     @endif
                                 </span>
                                 <span
-                                    class="text-[10px] font-mono {{ $troop['isMax'] ? 'text-orange-500' : 'text-slate-600' }}">
+                                    class="text-[10px] font-mono {{ $troop['level'] >= $troop['maxLevel'] ? 'text-orange-500' : 'text-slate-600' }}">
                                     Lv {{ $troop['level'] }} / {{ $troop['maxLevel'] }}
                                 </span>
                             </div>
@@ -328,15 +328,15 @@
                     <div class="overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                         @foreach($insights['spells']['list'] as $spell)
                             <div
-                                class="flex justify-between items-center p-3 rounded-xl {{ $spell['isMax'] ? 'bg-blue-500/10 border-blue-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all text-xs">
-                                <span class="{{ $spell['isMax'] ? 'text-blue-400 font-bold' : 'text-slate-400' }}">
+                                class="flex justify-between items-center p-3 rounded-xl {{ $spell['level'] >= $spell['maxLevel'] ? 'bg-blue-500/10 border-blue-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all text-xs">
+                                <span class="{{ $spell['level'] >= $spell['maxLevel'] ? 'text-blue-400 font-bold' : 'text-slate-400' }}">
                                     {{ $spell['name'] }}
-                                    @if($spell['isMax'])
+                                    @if($spell['level'] >= $spell['maxLevel'])
                                         <span
                                             class="ml-1 text-[8px] bg-blue-500 text-white px-1 rounded-sm uppercase">Max</span>
                                     @endif
                                 </span>
-                                <span class="font-mono {{ $spell['isMax'] ? 'text-blue-500' : 'text-slate-600' }}">Lv
+                                <span class="font-mono {{ $spell['level'] >= $spell['maxLevel'] ? 'text-blue-500' : 'text-slate-600' }}">Lv
                                     {{ $spell['level'] }} /
                                     {{ $spell['maxLevel'] }}</span>
                             </div>
@@ -460,6 +460,25 @@
                                 <p class="text-[11px] text-slate-500 leading-relaxed">{{ $rec['reason'] }}</p>
                             </div>
                         @endforeach
+
+                        @if(isset($insights['strategy']['gearPriorities']) && count($insights['strategy']['gearPriorities']) > 0)
+                            <div class="mt-8 space-y-4">
+                                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                                    GEAR UPGRADE PRIORITY
+                                </h3>
+                                @foreach($insights['strategy']['gearPriorities'] as $gp)
+                                    <div class="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20 relative overflow-hidden group">
+                                        <div class="absolute -right-4 -top-4 w-12 h-12 bg-indigo-500/10 rounded-full blur-xl group-hover:bg-indigo-500/20 transition-all"></div>
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h4 class="font-bold text-indigo-300">{{ $gp['name'] }}</h4>
+                                            <span class="text-[9px] font-black px-2 py-0.5 rounded-lg bg-indigo-500 text-white shadow-lg">{{ $gp['rank'] }}</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-400 leading-relaxed">{{ $gp['reason'] }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </section>
 

@@ -132,9 +132,6 @@ class PlayerInsightService
      */
     private function getThMaxLevel(string $type, string $name, int $th, int $apiMax): int
     {
-        // Many times the API already provides the TH max. 
-        // We only override if we detect it's returning the global max (e.g. 95 for TH10).
-
         if ($type === 'hero') {
             $heroMaxes = [
                 'Barbarian King' => [7 => 10, 8 => 20, 9 => 30, 10 => 40, 11 => 50, 12 => 65, 13 => 75, 14 => 80, 15 => 90, 16 => 95],
@@ -142,15 +139,28 @@ class PlayerInsightService
                 'Grand Warden' => [11 => 20, 12 => 40, 13 => 50, 14 => 55, 15 => 65, 16 => 70],
                 'Royal Champion' => [13 => 25, 14 => 30, 15 => 40, 16 => 45]
             ];
-
-            if (isset($heroMaxes[$name][$th])) {
-                return $heroMaxes[$name][$th];
-            }
+            return $heroMaxes[$name][$th] ?? $apiMax;
         }
 
-        // If the API max is much higher than what's possible for this TH, 
-        // it's likely a global max. We default back to the provided API max if unsure,
-        // but for heroes we use our verified table.
+        if ($type === 'troop') {
+            $troopMaxes = [
+                'Balloon' => [9 => 6, 10 => 7, 11 => 8, 12 => 9, 13 => 9, 14 => 10, 15 => 10, 16 => 11],
+                'Dragon' => [9 => 4, 10 => 5, 11 => 6, 12 => 7, 13 => 8, 14 => 9, 15 => 10, 16 => 11],
+                'Hog Rider' => [9 => 5, 10 => 6, 11 => 7, 12 => 9, 13 => 10, 14 => 11, 15 => 12, 16 => 13],
+                'Electro Dragon' => [11 => 2, 12 => 3, 13 => 4, 14 => 5, 15 => 6, 16 => 7],
+            ];
+            return $troopMaxes[$name][$th] ?? $apiMax;
+        }
+
+        if ($type === 'spell') {
+            $spellMaxes = [
+                'Heal Spell' => [9 => 6, 10 => 7, 11 => 7, 12 => 8, 13 => 10, 16 => 11],
+                'Rage Spell' => [9 => 5, 10 => 5, 11 => 6, 12 => 6, 16 => 7],
+                'Poison Spell' => [9 => 3, 10 => 4, 11 => 5, 16 => 6],
+            ];
+            return $spellMaxes[$name][$th] ?? $apiMax;
+        }
+
         return $apiMax;
     }
 
@@ -257,7 +267,7 @@ class PlayerInsightService
                 'progress' => round(($t['level'] / max(1, $maxLevel)) * 100),
                 'status' => $isMax ? 'MAX' : ($t['level'] >= $maxLevel * 0.8 ? 'DEKAT' : 'RENDAH')
             ];
-        })->sortByDesc('isMax')->values();
+        })->sortByDesc('level')->sortByDesc('isMax')->values();
 
         $airList = $list->where('type', 'air');
         $groundList = $list->where('type', 'ground');
@@ -281,18 +291,21 @@ class PlayerInsightService
             return ['readinessScore' => 0, 'list' => []];
 
         $list = $filtered->map(function ($s) use ($th) {
-            $maxLevel = $s['maxLevel'];
+            $maxLevel = $this->getThMaxLevel('spell', $s['name'], $th, $s['maxLevel']);
+            $isMax = $s['level'] >= $maxLevel;
             return [
                 'name' => $s['name'],
                 'level' => $s['level'],
                 'maxLevel' => $maxLevel,
-                'isMax' => $s['level'] >= $maxLevel,
+                'isMax' => $isMax,
                 'progress' => round(($s['level'] / max(1, $maxLevel)) * 100),
             ];
-        })->sortByDesc('isMax')->values();
+        })->sortByDesc('level')->sortByDesc('isMax')->values();
+
+        $avgProgress = $list->avg('progress');
 
         return [
-            'readinessScore' => round($list->sum('progress') / $list->count()),
+            'readinessScore' => round($avgProgress),
             'list' => $list->all(),
         ];
     }
@@ -319,10 +332,11 @@ class PlayerInsightService
                 'name' => $h['name'],
                 'level' => $h['level'],
                 'maxLevel' => $maxLevel,
+                'isMax' => $h['level'] >= $maxLevel,
                 'progress' => round(($h['level'] / max(1, $maxLevel)) * 100),
                 'activeEquipment' => $activeEquipment
             ];
-        })->values();
+        })->sortByDesc('level')->values();
 
         $totalProgress = $list->sum('progress');
 
@@ -349,7 +363,7 @@ class PlayerInsightService
                 'isMax' => $e['level'] >= $e['maxLevel'],
                 'progress' => round(($e['level'] / max(1, $e['maxLevel'])) * 100),
             ];
-        })->sortByDesc('isMax')->values();
+        })->sortByDesc('level')->sortByDesc('isEpic')->values();
 
         $avgProgress = $list->sum('progress') / $list->count();
 
