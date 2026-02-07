@@ -62,7 +62,7 @@ class PlayerInsightService
         );
 
         return [
-            'cv' => $this->calculateCvInsights($player, $th, $heroData, $troopData, $spellData, $equipmentData),
+            'cv' => $this->calculateWarCvInsights($player, $th, $heroData, $troopData, $spellData, $equipmentData),
             'health' => $health,
             'rush' => $rushStatus,
             'evolution' => $evolution,
@@ -367,40 +367,47 @@ class PlayerInsightService
         ];
     }
 
-    private function calculateCvInsights(array $player, int $th, array $heroes, array $troops, array $spells, array $equipment): array
+    private function calculateWarCvInsights(array $player, int $th, array $heroes, array $troops, array $spells, array $equipment): array
     {
-        $siegeData = $this->analyzeSiege($player['troops'] ?? [], $th);
-        $petData = $this->analyzePets($player['troops'] ?? [], $th);
-        $superTroopData = $this->analyzeSuperTroops($player['troops'] ?? [], $th);
+        $coreTroopNames = ['Root Rider', 'Electro Dragon', 'Balloon', 'Dragon Rider', 'Miner', 'Hog Rider'];
+        $warSpellNames = ['Rage Spell', 'Freeze Spell', 'Invisibility Spell', 'Healing Spell', 'Recall Spell'];
 
-        $heroMaxed = collect($heroes['list'])->every(fn($h) => $h['isMax']);
-        $troopMaxed = collect($troops['list'])->every(fn($t) => $t['isMax']);
-        $spellMaxed = collect($spells['list'])->every(fn($s) => $s['isMax']);
-        $gearMaxed = collect($equipment['list'])->every(fn($e) => $e['isMax']);
-        $siegeMaxed = collect($siegeData['list'])->every(fn($s) => $s['isMax']);
-        $petMaxed = $th >= 14 ? collect($petData['list'])->every(fn($p) => $p['isMax']) : true;
+        // 1. Heroes (40%)
+        $heroList = collect($heroes['list']);
+        $heroAvgProgress = $heroList->isEmpty() ? 0 : $heroList->avg('progress');
+        $heroMaxed = !$heroList->isEmpty() && $heroList->every(fn($h) => $h['isMax']);
 
-        $heroWeight = 0.30;
-        $troopWeight = 0.25;
-        $spellWeight = 0.10;
-        $siegeWeight = 0.10;
-        $petWeight = 0.10;
-        $gearWeight = 0.15;
+        // 2. Core Troops (25%)
+        $troopMap = collect($troops['list'])->keyBy('name');
+        $coreTroops = collect($coreTroopNames)->map(function ($name) use ($troopMap, $th) {
+            $t = $troopMap[$name] ?? null;
+            if (!$t)
+                return ['name' => $name, 'level' => 0, 'maxLevel' => $this->getThMaxLevel('troop', $name, $th, 1), 'isMax' => false, 'progress' => 0];
+            return $t;
+        });
+        $troopAvgProgress = $coreTroops->avg('progress');
+        $troopMaxed = $coreTroops->every(fn($t) => $t['isMax']);
 
-        $heroScore = $heroes['averageProgress'] ?? 0;
-        $troopScore = $troops['readinessScore'] ?? 0;
-        $spellScore = $spells['readinessScore'] ?? 0;
-        $siegeScore = $siegeData['readinessScore'] ?? 0;
-        $petScore = $petData['readinessScore'] ?? 0;
+        // 3. Spells (15%)
+        $spellMap = collect($spells['list'])->keyBy('name');
+        $warSpells = collect($warSpellNames)->map(function ($name) use ($spellMap, $th) {
+            $s = $spellMap[$name] ?? null;
+            if (!$s)
+                return ['name' => $name, 'level' => 0, 'maxLevel' => $this->getThMaxLevel('spell', $name, $th, 1), 'isMax' => false, 'progress' => 0];
+            return $s;
+        });
+        $spellAvgProgress = $warSpells->avg('progress');
+        $spellMaxed = $warSpells->every(fn($s) => $s['isMax']);
+
+        // 4. Equipment (20%)
         $gearScore = $equipment['score'] ?? 0;
+        $gearMaxed = collect($equipment['list'])->every(fn($e) => $e['isMax']);
 
         $cvHealth = (
-            ($heroScore * $heroWeight) +
-            ($troopScore * $troopWeight) +
-            ($spellScore * $spellWeight) +
-            ($siegeScore * $siegeWeight) +
-            ($petScore * $petWeight) +
-            ($gearScore * $gearWeight)
+            ($heroAvgProgress * 0.40) +
+            ($troopAvgProgress * 0.25) +
+            ($spellAvgProgress * 0.15) +
+            ($gearScore * 0.20)
         );
 
         $healthLabel = 'WAR READY';
@@ -424,11 +431,15 @@ class PlayerInsightService
                 'troopMax' => $troopMaxed,
                 'spellMax' => $spellMaxed,
                 'gearMax' => $gearMaxed,
-                'fullyMaxed' => ($heroMaxed && $troopMaxed && $spellMaxed && $gearMaxed && $siegeMaxed && $petMaxed)
+                'fullyMaxed' => ($heroMaxed && $troopMaxed && $spellMaxed && $gearMaxed)
             ],
-            'superTroops' => $superTroopData,
-            'siege' => $siegeData,
-            'pets' => $petData
+            'heroes' => $heroList->all(),
+            'troops' => $coreTroops->all(),
+            'spells' => $warSpells->all(),
+            'equipment' => [
+                'score' => $gearScore,
+                'isMax' => $gearMaxed
+            ]
         ];
     }
 

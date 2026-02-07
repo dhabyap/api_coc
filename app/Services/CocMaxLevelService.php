@@ -59,6 +59,7 @@ class CocMaxLevelService
             'Thrower' => [17 => 1, 18 => 4],
             'Ice Golem' => [11 => 1, 12 => 5, 13 => 6, 14 => 7, 15 => 8, 16 => 9, 17 => 10, 18 => 10],
             'Headhunter' => [12 => 1, 13 => 3, 14 => 3, 15 => 3, 16 => 3, 17 => 3, 18 => 4],
+            'Hog Rider' => [4 => 1, 5 => 2, 6 => 3, 7 => 4, 8 => 5, 9 => 6, 10 => 7, 11 => 8, 12 => 9, 13 => 10, 14 => 11, 15 => 12, 17 => 13, 18 => 14],
         ];
 
         return $this->resolveFromMap($troops, $name, $th);
@@ -77,6 +78,7 @@ class CocMaxLevelService
             'Earthquake Spell' => [9 => 1, 10 => 4, 11 => 5, 15 => 5, 18 => 5],
             'Haste Spell' => [9 => 1, 10 => 4, 11 => 5, 13 => 5, 17 => 6, 18 => 7],
             'Bat Spell' => [10 => 1, 11 => 5, 13 => 6, 18 => 8],
+            'Recall Spell' => [13 => 1, 14 => 2, 15 => 3, 16 => 4, 17 => 5, 18 => 5],
         ];
 
         return $this->resolveFromMap($spells, $name, $th);

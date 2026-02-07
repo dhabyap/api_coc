@@ -634,182 +634,277 @@
         </div>
 
         <!-- SUGGESTIONS & FEEDBACK SECTION -->
-        <!-- CLAN RESUME / CV SECTION -->
+        <!-- CLAN RESUME / CV SECTION (WAR FOCUSED) -->
         <section id="clan-cv" class="mt-12 mb-10">
             <div class="flex items-center gap-3 mb-6 no-screenshot">
                 <span class="w-2 h-6 bg-orange-500 rounded-full"></span>
-                <h2 class="text-2xl font-black text-white italic tracking-tighter">CLAN RESUME / CV</h2>
+                <h2 class="text-2xl font-black text-white italic tracking-tighter uppercase">War Focused Player Resume
+                </h2>
                 <span id="screenshot-indicator"
-                    class="hidden text-[10px] bg-orange-500/10 text-orange-500 px-3 py-1 rounded-full uppercase font-black tracking-widest ml-auto border border-orange-500/20">Screenshot
-                    Ready</span>
+                    class="hidden text-[10px] bg-orange-500/10 text-orange-500 px-3 py-1 rounded-full uppercase font-black tracking-widest ml-auto border border-orange-500/20 animate-pulse">Screenshot
+                    Mode Active</span>
             </div>
 
             <div class="relative group">
                 <div
-                    class="absolute -inset-1 bg-gradient-to-r from-orange-600/20 to-orange-900/10 rounded-[2.5rem] blur opacity-40">
+                    class="absolute -inset-1 bg-gradient-to-r from-orange-600/20 to-indigo-900/20 rounded-[2.5rem] blur opacity-40">
                 </div>
 
                 <div
-                    class="relative bg-[#161920] rounded-[2.5rem] p-8 md:p-12 border border-white/5 overflow-hidden shadow-2xl">
-                    <!-- Background Branding -->
-                    <div class="absolute top-0 right-0 p-8 opacity-5 select-none pointer-events-none">
-                        <h1 class="text-9xl font-black italic">COC CV</h1>
+                    class="relative bg-[#0d1117] rounded-[2.5rem] p-8 md:p-12 border border-white/5 overflow-hidden shadow-2xl">
+                    <!-- Background Branding Decor -->
+                    <div
+                        class="absolute -top-10 -right-10 p-8 opacity-[0.03] select-none pointer-events-none transform rotate-12">
+                        <h1 class="text-[12rem] font-black italic">WAR READY</h1>
                     </div>
 
                     <div class="relative z-10">
-                        <!-- Top Row: Name and Health -->
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-10 mb-12">
-                            <div class="flex flex-col items-center md:items-start text-center md:text-left">
-                                <div class="flex items-center gap-3 mb-6">
+                        <!-- Header: Name, Tag, Badges and Health Ring -->
+                        <div class="flex flex-col lg:flex-row justify-between items-center gap-12 mb-12">
+                            <div class="flex flex-col items-center lg:items-start text-center lg:text-left">
+                                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-6">
                                     <div
-                                        class="px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                        class="px-4 py-1.5 rounded-full bg-{{ $insights['cv']['health']['color'] }}-500/10 border border-{{ $insights['cv']['health']['color'] }}-500/20 text-[10px] font-black text-{{ $insights['cv']['health']['color'] }}-400 uppercase tracking-[0.2em] flex items-center gap-2">
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                                             <path
                                                 d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                                         </svg>
-                                        {{ $insights['evolution']['label'] }}
+                                        {{ $insights['cv']['health']['label'] }}
                                     </div>
+
                                     @if($insights['cv']['badges']['fullyMaxed'])
                                         <div
-                                            class="px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-[10px] font-black text-green-400 uppercase tracking-[0.2em]">
-                                            FULLY MAXED
+                                            class="px-4 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] shadow-[0_0_15px_rgba(99,102,241,0.3)]">
+                                            WAR-READY MAX ACCOUNT
                                         </div>
+                                    @else
+                                        @if($insights['cv']['badges']['heroMax'])
+                                            <div
+                                                class="px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-[9px] font-black text-green-400 uppercase tracking-widest">
+                                                ALL HERO MAX</div>
+                                        @endif
+                                        @if($insights['cv']['badges']['troopMax'])
+                                            <div
+                                                class="px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-[9px] font-black text-orange-400 uppercase tracking-widest">
+                                                CORE TROOPS MAX</div>
+                                        @endif
                                     @endif
                                 </div>
-                                <h3 class="text-6xl font-black text-white mb-2 tracking-tighter">{{ $player['name'] }}
-                                </h3>
-                                <p class="text-orange-500 font-mono text-2xl font-bold tracking-[0.3em] mb-8">
+
+                                <h3
+                                    class="text-6xl md:text-7xl font-black text-white mb-2 tracking-tighter leading-none">
+                                    {{ $player['name'] }}</h3>
+                                <p class="text-orange-500 font-mono text-2xl font-bold tracking-[0.4em] mb-10">
                                     <span class="opacity-30">#</span>{{ $player['tag'] }}
                                 </p>
 
-                                <div class="grid grid-cols-2 gap-8">
+                                <div class="grid grid-cols-2 gap-12">
                                     <div class="space-y-1">
-                                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Town
+                                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Town
                                             Hall</p>
-                                        <p class="text-3xl font-black text-white">TH {{ $player['townHallLevel'] }}</p>
+                                        <p class="text-4xl font-black text-white italic">TH
+                                            {{ $player['townHallLevel'] }}</p>
                                     </div>
                                     <div class="space-y-1">
-                                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">War
-                                            Status</p>
+                                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
+                                            Evaluation</p>
                                         <p
-                                            class="text-3xl font-black text-{{ $insights['cv']['health']['color'] }}-500 uppercase">
-                                            {{ $insights['cv']['health']['label'] }}
+                                            class="text-4xl font-black text-{{ $insights['cv']['health']['color'] }}-500 uppercase italic">
+                                            {{ $insights['cv']['health']['score'] }}%
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Circular Health -->
-                            <div class="relative w-48 h-48 md:w-56 md:h-56">
-                                <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                                    <circle cx="18" cy="18" r="15.915" fill="none" class="stroke-slate-800/50"
+                            <!-- Circular Health Indicator -->
+                            <div class="relative w-56 h-56 md:w-64 md:h-64 group/ring">
+                                <div
+                                    class="absolute inset-0 bg-{{ $insights['cv']['health']['color'] }}-500/5 rounded-full blur-2xl group-hover/ring:bg-{{ $insights['cv']['health']['color'] }}-500/10 transition-all">
+                                </div>
+                                <svg class="w-full h-full -rotate-90 relative z-10" viewBox="0 0 36 36">
+                                    <circle cx="18" cy="18" r="15.915" fill="none" class="stroke-slate-800/30"
                                         stroke-width="2.5" />
                                     <circle cx="18" cy="18" r="15.915" fill="none"
                                         class="stroke-{{ $insights['cv']['health']['color'] }}-500 transition-all duration-1000 ease-out"
                                         stroke-width="2.5"
-                                        stroke-dasharray="{{ $insights['cv']['health']['score'] }}, 100" />
+                                        stroke-dasharray="{{ $insights['cv']['health']['score'] }}, 100"
+                                        stroke-linecap="round" />
                                 </svg>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center z-20">
                                     <span
-                                        class="text-5xl md:text-6xl font-black text-white leading-none">{{ $insights['cv']['health']['score'] }}%</span>
+                                        class="text-6xl md:text-7xl font-black text-white leading-none tracking-tighter">{{ $insights['cv']['health']['score'] }}<span
+                                            class="text-3xl text-{{ $insights['cv']['health']['color'] }}-500 opacity-80">%</span></span>
                                     <span
-                                        class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-2">HEALTH</span>
+                                        class="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] mt-3">Health
+                                        Status</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Collection Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                            <!-- Hero Badges -->
-                            <div class="bg-slate-900/40 p-5 rounded-3xl border border-white/5">
+                        <!-- Data Grid: Hero, Troops, Spell, Gear -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
+                            <!-- Hero Section (40%) -->
+                            <div class="bg-slate-900/30 p-6 rounded-[2rem] border border-white/5 flex flex-col">
                                 <h4
-                                    class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center justify-between">
-                                    HEROES
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 flex items-center justify-between">
+                                    HERO STRENGTH
                                     @if($insights['cv']['badges']['heroMax'])
-                                        <span class="bg-green-500/10 text-green-500 text-[8px] px-2 py-0.5 rounded-sm">ALL
-                                            MAXED</span>
+                                        <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clip-rule="evenodd" />
+                                        </svg>
                                     @endif
                                 </h4>
-                                <div class="space-y-3">
-                                    @foreach($insights['heroes']['list'] as $hero)
-                                        <div class="flex justify-between items-center">
-                                            <span
-                                                class="text-xs font-bold {{ $hero['isMax'] ? 'text-orange-400' : 'text-slate-300' }}">{{ $hero['name'] }}</span>
-                                            <span class="text-[10px] font-mono text-slate-500">{{ $hero['level'] }} /
-                                                {{ $hero['maxLevel'] }}</span>
+                                <div class="space-y-4 flex-grow">
+                                    @foreach($insights['cv']['heroes'] as $hero)
+                                        <div class="space-y-1.5">
+                                            <div class="flex justify-between items-center">
+                                                <span
+                                                    class="text-[11px] font-bold {{ $hero['isMax'] ? 'text-orange-400' : 'text-slate-300' }}">{{ $hero['name'] }}</span>
+                                                <span
+                                                    class="text-[10px] font-mono text-slate-500">{{ $hero['level'] }}/{{ $hero['maxLevel'] }}</span>
+                                            </div>
+                                            <div class="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-{{ $hero['isMax'] ? 'orange-500' : 'slate-600' }}"
+                                                    style="width: {{ $hero['progress'] }}%"></div>
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>
+                                <div class="mt-6 pt-4 border-t border-white/5 text-center">
+                                    <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Weight:
+                                        40%</span>
+                                </div>
                             </div>
 
-                            <!-- Troop Status -->
-                            <div class="bg-slate-900/40 p-5 rounded-3xl border border-white/5">
+                            <!-- Core Troop Status (25%) -->
+                            <div class="bg-slate-900/30 p-6 rounded-[2rem] border border-white/5 flex flex-col">
                                 <h4
-                                    class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center justify-between">
-                                    SUPER TROOPS
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 flex items-center justify-between">
+                                    CORE WAR TROOPS
                                     @if($insights['cv']['badges']['troopMax'])
-                                        <span class="bg-green-500/10 text-green-500 text-[8px] px-2 py-0.5 rounded-sm">ALL
-                                            MAXED</span>
+                                        <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                                                clip-rule="evenodd" />
+                                        </svg>
                                     @endif
                                 </h4>
-                                <div class="grid grid-cols-2 gap-x-4 gap-y-2">
-                                    @foreach(array_slice($insights['cv']['superTroops'], 0, 10) as $st)
-                                        <div class="flex items-center justify-between">
+                                <div class="grid grid-cols-1 gap-2 flex-grow">
+                                    @foreach($insights['cv']['troops'] as $t)
+                                        <div
+                                            class="flex items-center justify-between p-2 rounded-xl {{ $t['isMax'] ? 'bg-orange-500/5' : '' }}">
                                             <span
-                                                class="text-[9px] font-medium text-slate-400 truncate pr-2">{{ $st['name'] }}</span>
+                                                class="text-[10px] font-bold {{ $t['isMax'] ? 'text-orange-400' : 'text-slate-400' }}">{{ $t['name'] }}</span>
                                             <span
-                                                class="text-[8px] font-black {{ $st['isMax'] ? 'text-orange-400' : 'text-slate-600' }}">{{ $st['status'] }}</span>
+                                                class="text-[8px] font-black px-2 py-0.5 rounded {{ $t['isMax'] ? 'bg-orange-500 text-white' : 'bg-slate-800 text-slate-500' }}">
+                                                {{ $t['isMax'] ? 'MAX' : 'Lvl ' . $t['level'] }}
+                                            </span>
                                         </div>
                                     @endforeach
                                 </div>
+                                <div class="mt-6 pt-4 border-t border-white/5 text-center">
+                                    <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Weight:
+                                        25%</span>
+                                </div>
                             </div>
 
-                            <!-- Gear & Gear Max -->
-                            <div class="bg-slate-900/40 p-5 rounded-3xl border border-white/5">
+                            <!-- War Spell Summary (15%) -->
+                            <div class="bg-slate-900/30 p-6 rounded-[2rem] border border-white/5 flex flex-col">
                                 <h4
-                                    class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center justify-between">
-                                    EQUIPMENT & SPELLS
-                                    @if($insights['cv']['badges']['gearMax'])
-                                        <span class="bg-green-500/10 text-green-500 text-[8px] px-2 py-0.5 rounded-sm">GEAR
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 flex items-center justify-between">
+                                    WAR SPELLS
+                                    @if($insights['cv']['badges']['spellMax'])
+                                        <span class="text-[8px] bg-blue-500 text-white px-2 py-0.5 rounded font-black">ALL
                                             MAX</span>
                                     @endif
                                 </h4>
-                                <div class="space-y-4">
-                                    <div class="flex justify-between items-center pb-2 border-b border-white/5">
-                                        <span class="text-[10px] text-slate-400">Total Gear Level</span>
-                                        <span
-                                            class="text-xs font-black text-white">{{ $insights['equipment']['score'] }}%</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-[10px] text-slate-400">Spell Proficiency</span>
-                                        <span
-                                            class="text-xs font-black text-white">{{ $insights['spells']['readinessScore'] }}%</span>
-                                    </div>
-                                    @if($insights['cv']['badges']['spellMax'])
-                                        <div class="text-center pt-2">
-                                            <span class="text-[9px] font-black text-blue-400 uppercase tracking-widest">ALL
-                                                SPELLS MAXED</span>
+                                <div class="space-y-3 flex-grow">
+                                    @foreach($insights['cv']['spells'] as $s)
+                                        <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/20">
+                                            <div class="flex items-center gap-2">
+                                                <div
+                                                    class="w-1.5 h-1.5 rounded-full bg-{{ $s['isMax'] ? 'blue-500' : 'slate-700' }}">
+                                                </div>
+                                                <span
+                                                    class="text-[10px] font-bold text-slate-300">{{ str_replace(' Spell', '', $s['name']) }}</span>
+                                            </div>
+                                            <span
+                                                class="text-[8px] font-mono {{ $s['isMax'] ? 'text-blue-400' : 'text-slate-500' }}">
+                                                {{ $s['isMax'] ? 'MAX' : 'Lvl ' . $s['level'] }}
+                                            </span>
                                         </div>
+                                    @endforeach
+                                </div>
+                                <div class="mt-6 pt-4 border-t border-white/5 text-center">
+                                    <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Weight:
+                                        15%</span>
+                                </div>
+                            </div>
+
+                            <!-- Hero Gear / Equipment (20%) -->
+                            <div class="bg-slate-900/30 p-6 rounded-[2rem] border border-white/5 flex flex-col">
+                                <h4
+                                    class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 flex items-center justify-between">
+                                    EQUIPMENT & GEAR
+                                    @if($insights['cv']['badges']['gearMax'])
+                                        <span
+                                            class="bg-purple-500/10 text-purple-400 text-[8px] px-2 py-0.5 rounded font-black">MAXED</span>
                                     @endif
+                                </h4>
+                                <div class="flex-grow flex flex-col items-center justify-center text-center">
+                                    <div class="text-[2.5rem] font-black text-white leading-none mb-1">
+                                        {{ $insights['cv']['equipment']['score'] }}%</div>
+                                    <div class="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em]">Total
+                                        Gear Progress</div>
+
+                                    <div class="grid grid-cols-2 gap-3 mt-8 w-full">
+                                        <div class="bg-slate-800/40 p-3 rounded-2xl border border-white/5">
+                                            <p class="text-[8px] font-black text-slate-500 uppercase mb-1">Status</p>
+                                            <p
+                                                class="text-[10px] font-bold {{ $insights['cv']['badges']['gearMax'] ? 'text-green-500' : 'text-orange-400' }}">
+                                                {{ $insights['cv']['badges']['gearMax'] ? 'Optimized' : 'In Progress' }}
+                                            </p>
+                                        </div>
+                                        <div class="bg-slate-800/40 p-3 rounded-2xl border border-white/5">
+                                            <p class="text-[8px] font-black text-slate-500 uppercase mb-1">Rating</p>
+                                            <p class="text-[10px] font-bold text-white">
+                                                {{ $insights['cv']['equipment']['score'] >= 90 ? 'S' : ($insights['cv']['equipment']['score'] >= 75 ? 'A' : ($insights['cv']['equipment']['score'] >= 50 ? 'B' : 'C')) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-6 pt-4 border-t border-white/5 text-center">
+                                    <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Weight:
+                                        20%</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- CV Footer -->
+                        <!-- CV Footer: Info and Actions -->
                         <div
-                            class="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-white/5">
-                            <p class="text-[10px] text-slate-500 italic max-w-md text-center md:text-left">
-                                Dihasilkan secara otomatis oleh <strong>CoC Deep Insight System</strong>. Evaluasi
-                                strategis berbasis data aktual TH {{ $player['townHallLevel'] }}.
-                            </p>
+                            class="flex flex-col md:flex-row justify-between items-center gap-8 pt-10 border-t border-white/5">
+                            <div class="flex flex-col items-center md:items-start gap-2">
+                                <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Generated by
+                                    CoC Deep Insight System v2.0</p>
+                                <p class="text-[9px] text-slate-600 italic">Evaluasi strategis war-focused berbasis data
+                                    TH{{ $player['townHallLevel'] }} &bull; War-Ready logic active</p>
+                            </div>
+
                             <div class="flex items-center gap-4 no-screenshot">
-                                <button onclick="copyToClipboard()"
-                                    class="bg-white/5 hover:bg-white/10 text-white px-8 py-3 rounded-2xl border border-white/10 text-xs font-black uppercase tracking-widest transition-all shadow-xl flex items-center gap-3">
-                                    <span>Copy Profile Link</span>
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button onclick="copyToClipboard(this)"
+                                    class="group bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-2xl transition-all shadow-xl shadow-indigo-900/20 flex items-center gap-3">
+                                    <span class="text-xs font-black uppercase tracking-widest">Copy Profile Link</span>
+                                    <svg class="w-4 h-4 group-hover:rotate-12 transition-transform" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                                     </svg>
+                                </button>
+                                <button onclick="toggleScreenshotMode()"
+                                    class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-4 rounded-2xl border border-slate-700 transition-all text-xs font-black uppercase tracking-widest">
+                                    Capture View
                                 </button>
                             </div>
                         </div>
@@ -819,30 +914,42 @@
         </section>
 
         <script>
-            function copyToClipboard() {
+            function copyToClipboard(btn) {
                 const url = window.location.href;
+                const originalText = btn.querySelector('span').innerText;
+                
                 navigator.clipboard.writeText(url).then(() => {
-                    alert('Link profil telah disalin ke clipboard!');
+                    btn.querySelector('span').innerText = 'LINK COPIED!';
+                    btn.classList.replace('bg-indigo-600', 'bg-green-600');
+                    
+                    setTimeout(() => {
+                        btn.querySelector('span').innerText = originalText;
+                        btn.classList.replace('bg-green-600', 'bg-indigo-600');
+                    }, 2000);
                 });
             }
 
             function toggleScreenshotMode() {
-                const container = document.querySelector('.max-w-5xl');
                 const isScreenshot = document.body.classList.toggle('screenshot-mode');
-                const btn = document.getElementById('screenshotToggleBtn');
                 const indicator = document.getElementById('screenshot-indicator');
+                const exitBtn = document.getElementById('exit-screenshot-btn');
 
                 if (isScreenshot) {
-                    btn.innerText = 'Exit Screenshot Mode';
-                    indicator.classList.remove('hidden');
-                    // Scroll to CV
+                    if(indicator) indicator.classList.remove('hidden');
+                    if(exitBtn) exitBtn.classList.remove('hidden');
                     document.getElementById('clan-cv').scrollIntoView({ behavior: 'smooth' });
                 } else {
-                    btn.innerText = 'Enable Screenshot Mode';
-                    indicator.classList.add('hidden');
+                    if(indicator) indicator.classList.add('hidden');
+                    if(exitBtn) exitBtn.classList.add('hidden');
                 }
             }
         </script>
+
+        <!-- Floating Exit Button for Screenshot Mode -->
+        <button id="exit-screenshot-btn" onclick="toggleScreenshotMode()" 
+            class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-orange-600 text-white px-6 py-3 rounded-full font-black text-xs uppercase tracking-[0.2em] shadow-2xl border border-orange-500/50 hover:bg-orange-500 transition-all no-screenshot-btn">
+            Exit Screenshot Mode
+        </button>
         <div class="flex flex-col md:flex-row justify-between items-end gap-4 no-screenshot">
             <div>
                 <h2 class="text-2xl font-black flex items-center gap-3">
