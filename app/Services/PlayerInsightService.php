@@ -85,6 +85,14 @@ class PlayerInsightService
         ];
     }
 
+    /**
+     * Get upgrade recommendations (Heroes, Gear, Troops, Spells).
+     */
+    public function getRecommendations(array $player, array $insights): array
+    {
+        return $this->priorityService->getPriorities($player, $insights);
+    }
+
     private function calculateEvolutionLabel(int $score, bool $isRushed, string $warStatus, array $player, array $insights): array
     {
         // Agile parameters
