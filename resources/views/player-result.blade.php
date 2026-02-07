@@ -293,15 +293,19 @@
                                     <div class="h-full {{ $hero['level'] >= $hero['maxLevel'] ? 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.5)]' : 'bg-slate-600' }}"
                                         style="width: {{ ($hero['level'] / max(1, $hero['maxLevel'])) * 100 }}%"></div>
                                 </div>
-                                
+
                                 @if(isset($hero['activeEquipment']) && count($hero['activeEquipment']) > 0)
-                                    <div class="flex gap-2">
+                                    <div class="grid grid-cols-2 gap-2">
                                         @foreach($hero['activeEquipment'] as $eq)
-                                            <div class="flex-grow flex items-center gap-1.5 bg-white/5 px-2 py-1.5 rounded-lg border border-white/10">
-                                                <div class="w-1 h-1 rounded-full bg-purple-500"></div>
-                                                <div class="flex-grow">
-                                                    <p class="text-[8px] font-black text-slate-300 leading-none truncate w-20">{{ $eq['name'] }}</p>
-                                                    <p class="text-[7px] font-mono text-slate-500 mt-0.5">Lv {{ $eq['level'] }}</p>
+                                            <div
+                                                class="flex items-center gap-2 bg-white/5 px-3 py-2 rounded-xl border border-white/10 shadow-sm transition-all hover:bg-white/10">
+                                                <div
+                                                    class="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]">
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="text-[10px] font-black text-slate-200 leading-tight truncate">
+                                                        {{ $eq['name'] }}</p>
+                                                    <p class="text-[8px] font-mono text-slate-500 mt-0.5">Lv {{ $eq['level'] }}</p>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -346,31 +350,43 @@
                         <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
                         COLLECTED GEAR (MAX AT TOP)
                     </h3>
-                    <div class="overflow-y-auto custom-scrollbar pr-2 space-y-4">
+                    <div class="overflow-y-auto custom-scrollbar pr-2 space-y-6">
                         <!-- Epic Gear -->
                         @php $epicGear = collect($insights['equipment']['list'])->where('isEpic', true); @endphp
                         @if($epicGear->count() > 0)
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-2 px-1">
-                                    <span class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em]">Epic Equipment</span>
-                                    <div class="h-px flex-grow bg-indigo-500/20"></div>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3 px-1">
+                                    <div class="w-2 h-4 bg-indigo-500 rounded-sm"></div>
+                                    <span class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Epic
+                                        Equipment</span>
+                                    <div class="h-px flex-grow bg-gradient-to-r from-indigo-500/20 to-transparent"></div>
                                 </div>
-                                <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                                     @foreach($epicGear as $item)
-                                        <div class="relative group p-2 rounded-xl {{ $item['isMax'] ? 'bg-indigo-500/10 border-indigo-400/40 shadow-lg' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all hover:bg-indigo-500/20">
+                                        <div
+                                            class="relative group p-3 rounded-2xl {{ $item['isMax'] ? 'bg-indigo-500/10 border-indigo-400/30' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all hover:scale-[1.02] hover:bg-slate-900/60">
                                             @if($item['isMax'])
-                                                <div class="absolute -top-1.5 -right-1.5 z-10">
-                                                    <span class="bg-indigo-500 text-[6px] font-black text-white px-1.5 py-0.5 rounded-full uppercase shadow-lg">MAX</span>
+                                                <div class="absolute -top-2 -right-1 z-10">
+                                                    <span
+                                                        class="bg-indigo-500 text-[7px] font-black text-white px-2 py-0.5 rounded-full uppercase shadow-[0_0_10px_rgba(99,102,241,0.5)]">MAX</span>
                                                 </div>
                                             @endif
                                             <div class="flex flex-col items-center text-center">
-                                                <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-1.5">
-                                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                                <div
+                                                    class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-2 border border-indigo-500/10">
+                                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                        <path
+                                                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                                     </svg>
                                                 </div>
-                                                <p class="text-[9px] font-black {{ $item['isMax'] ? 'text-indigo-400' : 'text-slate-400' }} tracking-tight leading-tight line-clamp-1 truncate w-full">{{ $item['name'] }}</p>
-                                                <p class="text-[8px] font-mono text-slate-500 mt-1">Lv {{ $item['level'] }}</p>
+                                                <p
+                                                    class="text-[10px] font-black {{ $item['isMax'] ? 'text-indigo-400' : 'text-slate-300' }} tracking-tight leading-tight mb-1">
+                                                    {{ $item['name'] }}</p>
+                                                <div
+                                                    class="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5">
+                                                    <span class="text-[8px] font-mono text-slate-500">Lv
+                                                        {{ $item['level'] }}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     @endforeach
@@ -381,21 +397,30 @@
                         <!-- Common Gear -->
                         @php $commonGear = collect($insights['equipment']['list'])->where('isEpic', false); @endphp
                         @if($commonGear->count() > 0)
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-2 px-1">
-                                    <span class="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em]">Common Equipment</span>
-                                    <div class="h-px flex-grow bg-slate-800/50"></div>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3 px-1">
+                                    <div class="w-2 h-4 bg-purple-500/50 rounded-sm"></div>
+                                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Common
+                                        Equipment</span>
+                                    <div class="h-px flex-grow bg-gradient-to-r from-slate-800 to-transparent"></div>
                                 </div>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
                                     @foreach($commonGear as $item)
-                                        <div class="relative p-2 rounded-xl {{ $item['isMax'] ? 'bg-purple-500/10 border-purple-400/40 shadow-lg' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all text-center">
+                                        <div
+                                            class="relative p-2.5 rounded-2xl {{ $item['isMax'] ? 'bg-purple-500/10 border-purple-400/20' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all hover:bg-slate-900/60">
                                             @if($item['isMax'])
-                                                <div class="absolute -top-1.5 -right-1.5 z-10">
-                                                    <span class="bg-purple-500 text-[6px] font-black text-white px-1.5 py-0.5 rounded-full uppercase">MAX</span>
+                                                <div class="absolute -top-1.5 -right-1 z-10">
+                                                    <span
+                                                        class="bg-purple-500/80 text-[6px] font-black text-white px-1.5 py-0.5 rounded-full uppercase">MAX</span>
                                                 </div>
                                             @endif
-                                            <p class="text-[9px] font-bold {{ $item['isMax'] ? 'text-purple-400' : 'text-slate-500' }} leading-tight line-clamp-1 truncate w-full">{{ $item['name'] }}</p>
-                                            <p class="text-[8px] font-mono text-slate-600 mt-1">Lv {{ $item['level'] }}</p>
+                                            <p
+                                                class="text-[10px] font-bold {{ $item['isMax'] ? 'text-purple-400' : 'text-slate-400' }} leading-tight mb-1 truncate w-full">
+                                                {{ $item['name'] }}</p>
+                                            <div
+                                                class="inline-block bg-black/20 px-2 py-0.5 rounded-full border border-white/5">
+                                                <span class="text-[8px] font-mono text-slate-600">Lv {{ $item['level'] }}</span>
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>
@@ -455,22 +480,29 @@
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         @forelse($insights['strategy']['superTroops'] as $st)
-                            <div class="flex items-center gap-4 bg-orange-500/10 p-3 rounded-2xl border border-orange-500/30 shadow-lg shadow-orange-500/5">
+                            <div
+                                class="flex items-center gap-4 bg-orange-500/10 p-3 rounded-2xl border border-orange-500/30 shadow-lg shadow-orange-500/5">
                                 <div class="relative">
-                                    <div class="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-500">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center text-orange-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                                                clip-rule="evenodd" />
                                         </svg>
                                     </div>
                                     <span class="absolute -top-1 -right-1 flex h-2 w-2">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                        <span
+                                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                                         <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
                                     </span>
                                 </div>
                                 <div class="flex-grow">
                                     <div class="flex justify-between items-center">
                                         <h4 class="text-xs font-bold text-orange-400">{{ $st['name'] }}</h4>
-                                        <span class="text-[7px] font-black bg-orange-500 text-white px-1.5 py-0.5 rounded-full uppercase">MAX</span>
+                                        <span
+                                            class="text-[7px] font-black bg-orange-500 text-white px-1.5 py-0.5 rounded-full uppercase">MAX</span>
                                     </div>
                                     <p class="text-[9px] text-slate-500 mt-0.5">{{ $st['reason'] }}</p>
                                 </div>
@@ -542,39 +574,60 @@
             <div class="flex items-center gap-3 mb-6">
                 <span class="w-2 h-6 bg-orange-500 rounded-full"></span>
                 <h2 class="text-2xl font-black text-white">CLAN RESUME / CV</h2>
-                <span class="text-[10px] bg-white/5 text-slate-500 px-3 py-1 rounded-full uppercase font-black tracking-widest ml-auto">Screenshot Ready</span>
+                <span
+                    class="text-[10px] bg-white/5 text-slate-500 px-3 py-1 rounded-full uppercase font-black tracking-widest ml-auto">Screenshot
+                    Ready</span>
             </div>
 
             <div class="relative group">
                 <!-- Glowing background effect tied to evolution color -->
-                <div class="absolute -inset-1 bg-gradient-to-r {{ $insights['evolution']['color'] == 'yellow' ? 'from-yellow-600 to-orange-600' : ($insights['evolution']['color'] == 'purple' ? 'from-purple-600 to-indigo-600' : ($insights['evolution']['color'] == 'blue' ? 'from-blue-600 to-cyan-600' : 'from-red-600 to-orange-600')) }} rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r {{ $insights['evolution']['color'] == 'yellow' ? 'from-yellow-600 to-orange-600' : ($insights['evolution']['color'] == 'purple' ? 'from-purple-600 to-indigo-600' : ($insights['evolution']['color'] == 'blue' ? 'from-blue-600 to-cyan-600' : 'from-red-600 to-orange-600')) }} rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200">
+                </div>
 
                 <div class="relative glass-card rounded-[2rem] p-8 border border-white/10 overflow-hidden shadow-2xl">
                     <!-- CV Content -->
                     <div class="flex flex-col md:flex-row justify-between gap-8 items-center">
                         <div class="flex flex-col items-center md:items-start text-center md:text-left">
-                            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-{{ $insights['evolution']['color'] }}-500/20 border border-{{ $insights['evolution']['color'] }}-500/30 text-{{ $insights['evolution']['color'] == 'yellow' ? 'yellow-500' : ($insights['evolution']['color'] == 'purple' ? 'purple-400' : ($insights['evolution']['color'] == 'blue' ? 'blue-400' : 'red-400')) }} mb-4">
+                            <div
+                                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-{{ $insights['evolution']['color'] }}-500/20 border border-{{ $insights['evolution']['color'] }}-500/30 text-{{ $insights['evolution']['color'] == 'yellow' ? 'yellow-500' : ($insights['evolution']['color'] == 'purple' ? 'purple-400' : ($insights['evolution']['color'] == 'blue' ? 'blue-400' : 'red-400')) }} mb-4">
                                 @if($insights['evolution']['icon'] === 'crown')
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z" /></svg>
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z" />
+                                    </svg>
                                 @elseif($insights['evolution']['icon'] === 'swords')
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6.92 5c-.26 0-.52.1-.71.29l-1.93 1.93c-.39.39-.39 1.03 0 1.42L8.59 13l-4.14 4.14c-.39.39-.39 1.03 0 1.42l1.93 1.93c.39.39 1.03.39 1.42 0L11.94 16.34l4.14 4.14c.39.39 1.03.39 1.42 0l1.93-1.93c.39-.39.39-1.03 0-1.42L15.29 13l4.29-4.29c.39-.39.39-1.03 0-1.42l-1.93-1.93c-.39-.39-1.03-.39-1.42 0L11.94 9.66 7.63 5.29C7.44 5.1 7.18 5 6.92 5z" /></svg>
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M6.92 5c-.26 0-.52.1-.71.29l-1.93 1.93c-.39.39-.39 1.03 0 1.42L8.59 13l-4.14 4.14c-.39.39-.39 1.03 0 1.42l1.93 1.93c.39.39 1.03.39 1.42 0L11.94 16.34l4.14 4.14c.39.39 1.03.39 1.42 0l1.93-1.93c.39-.39.39-1.03 0-1.42L15.29 13l4.29-4.29c.39-.39.39-1.03 0-1.42l-1.93-1.93c-.39-.39-1.03-.39-1.42 0L11.94 9.66 7.63 5.29C7.44 5.1 7.18 5 6.92 5z" />
+                                    </svg>
                                 @elseif($insights['evolution']['icon'] === 'hammer')
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19.78 6.41C19.91 6.54 20 6.7 20 6.88V7.12C20 7.3 19.91 7.46 19.78 7.59L17.59 9.78C17.46 9.91 17.3 20 17 20C16.7 20 16.54 19.91 16.41 19.78L4.22 7.59C4.09 7.46 4 7.3 4 7.12V6.88C4 6.7 4.09 6.54 4.22 6.41L6.41 4.22C6.54 4.09 6.7 4 6.88 4H7.12C7.3 4 7.46 4.09 7.59 4.22L9.78 6.41L19.78 6.41Z" /></svg>
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M19.78 6.41C19.91 6.54 20 6.7 20 6.88V7.12C20 7.3 19.91 7.46 19.78 7.59L17.59 9.78C17.46 9.91 17.3 20 17 20C16.7 20 16.54 19.91 16.41 19.78L4.22 7.59C4.09 7.46 4 7.3 4 7.12V6.88C4 6.7 4.09 6.54 4.22 6.41L6.41 4.22C6.54 4.09 6.7 4 6.88 4H7.12C7.3 4 7.46 4.09 7.59 4.22L9.78 6.41L19.78 6.41Z" />
+                                    </svg>
                                 @else
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22.7,19L13.6,9.9C14,8.8,14,7.6,13.4,6.5c-0.8-1.4-2.2-2.3-3.8-2.5C9.4,3.9,9,4,8.6,4.1c0.1,0,0.1,0.1,0.2,0.1l3.5,3.5l-2.1,2.1L6.7,6.3C6.7,6.2,6.6,6.2,6.6,6.1C6.5,6.5,6.4,7,6.4,7.4c0.2,1.6,1.1,3,2.5,3.8c1.1,0.6,2.3,0.7,3.4,0.3L21.4,21c0.4,0.4,1,0.4,1.4,0S23.1,19.4,22.7,19z" /></svg>
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M22.7,19L13.6,9.9C14,8.8,14,7.6,13.4,6.5c-0.8-1.4-2.2-2.3-3.8-2.5C9.4,3.9,9,4,8.6,4.1c0.1,0,0.1,0.1,0.2,0.1l3.5,3.5l-2.1,2.1L6.7,6.3C6.7,6.2,6.6,6.2,6.6,6.1C6.5,6.5,6.4,7,6.4,7.4c0.2,1.6,1.1,3,2.5,3.8c1.1,0.6,2.3,0.7,3.4,0.3L21.4,21c0.4,0.4,1,0.4,1.4,0S23.1,19.4,22.7,19z" />
+                                    </svg>
                                 @endif
                                 <span class="tracking-[0.2em]">{{ $insights['evolution']['label'] }}</span>
                             </div>
                             <h3 class="text-4xl font-black text-white mb-1">{{ $player['name'] }}</h3>
-                            <p class="text-orange-500 font-mono text-xl font-bold tracking-[0.2em] mb-4">#{{ $player['tag'] }}</p>
+                            <p class="text-orange-500 font-mono text-xl font-bold tracking-[0.2em] mb-4">
+                                #{{ $player['tag'] }}</p>
                             <div class="flex gap-4">
                                 <div class="text-center md:text-left">
-                                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">TH Level</p>
+                                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">TH Level
+                                    </p>
                                     <p class="text-xl font-black text-white">TH {{ $player['townHallLevel'] }}</p>
                                 </div>
                                 <div class="text-center md:text-left border-l border-white/10 pl-4">
-                                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">War Status</p>
-                                    <p class="text-xl font-black {{ $insights['warReadiness']['color'] == 'green' ? 'text-green-500' : ($insights['warReadiness']['color'] == 'yellow' ? 'text-yellow-500' : 'text-red-500') }} uppercase">
+                                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">War Status
+                                    </p>
+                                    <p
+                                        class="text-xl font-black {{ $insights['warReadiness']['color'] == 'green' ? 'text-green-500' : ($insights['warReadiness']['color'] == 'yellow' ? 'text-yellow-500' : 'text-red-500') }} uppercase">
                                         {{ $insights['warReadiness']['status'] }}
                                     </p>
                                 </div>
@@ -584,25 +637,38 @@
                         <div class="flex items-center gap-6">
                             <div class="relative w-32 h-32 md:w-40 md:h-40">
                                 <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" class="stroke-slate-800" stroke-width="3" />
-                                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" class="{{ $insights['health']['color'] === 'green' ? 'stroke-green-500' : ($insights['health']['color'] === 'yellow' ? 'stroke-yellow-500' : 'stroke-red-500') }}" stroke-width="3" stroke-dasharray="{{ $insights['health']['score'] }}, 100" />
+                                    <path
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                        fill="none" class="stroke-slate-800" stroke-width="3" />
+                                    <path
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                        fill="none"
+                                        class="{{ $insights['health']['color'] === 'green' ? 'stroke-green-500' : ($insights['health']['color'] === 'yellow' ? 'stroke-yellow-500' : 'stroke-red-500') }}"
+                                        stroke-width="3" stroke-dasharray="{{ $insights['health']['score'] }}, 100" />
                                 </svg>
                                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span class="text-3xl md:text-4xl font-black text-white leading-none">{{ $insights['health']['score'] }}%</span>
-                                    <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Health</span>
+                                    <span
+                                        class="text-3xl md:text-4xl font-black text-white leading-none">{{ $insights['health']['score'] }}%</span>
+                                    <span
+                                        class="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Health</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div
+                        class="mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
                         <p class="text-[10px] text-slate-500 text-center md:text-left italic">
-                            *Dihasilkan secara otomatis oleh <strong>CoC Deep Insight System</strong>. Gunakan data ini untuk evaluasi anggota Clan.
+                            *Dihasilkan secara otomatis oleh <strong>CoC Deep Insight System</strong>. Gunakan data ini
+                            untuk evaluasi anggota Clan.
                         </p>
-                        <button onclick="copyToClipboard()" class="bg-white/5 hover:bg-white/10 text-white px-6 py-2.5 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2">
+                        <button onclick="copyToClipboard()"
+                            class="bg-white/5 hover:bg-white/10 text-white px-6 py-2.5 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2">
                             <span>Copy Profile Link</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                             </svg>
                         </button>
                     </div>
@@ -616,104 +682,102 @@
                 navigator.clipboard.writeText(url).then(() => {
                     alert('Link profil telah disalin ke clipboard!');
                 });
-            }
+    }
         </script>
-            <div class="flex flex-col md:flex-row justify-between items-end gap-4">
-                <div>
-                    <h2 class="text-2xl font-black flex items-center gap-3">
-                        <span class="w-2 h-6 bg-blue-500 rounded-full"></span>
-                        HUBUNGI DEVELOPER
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-1">Berikan saran atau laporkan bug langsung kepada pengembang
-                        aplikasi.</p>
+        <div class="flex flex-col md:flex-row justify-between items-end gap-4">
+            <div>
+                <h2 class="text-2xl font-black flex items-center gap-3">
+                    <span class="w-2 h-6 bg-blue-500 rounded-full"></span>
+                    HUBUNGI DEVELOPER
+                </h2>
+                <p class="text-xs text-slate-500 mt-1">Berikan saran atau laporkan bug langsung kepada pengembang
+                    aplikasi.</p>
+            </div>
+        </div>
+
+        @if(session('success'))
+            <div
+                class="bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-2xl text-xs font-bold animate-pulse">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-2xl text-xs font-bold">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Suggestion List -->
+            <div class="space-y-4">
+                <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Masukan Terbaru
+                </h3>
+                <div class="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                    @forelse($suggestions as $s)
+                        <div class="glass-card p-4 rounded-2xl border-l-2 border-l-blue-500/50">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs font-black text-slate-200">{{ $s->name ?? 'Anonim' }}</span>
+                                <span
+                                    class="text-[9px] text-slate-600 font-mono">{{ $s->created_at->diffForHumans() }}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 leading-relaxed italic">"{{ $s->suggestion }}"</p>
+                        </div>
+                    @empty
+                        <div class="text-center py-10 bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
+                            <p class="text-xs text-slate-600">Belum ada masukan untuk developer. <br> Jadilah yang
+                                pertama memberikan ide atau laporan!</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
 
-            @if(session('success'))
-                <div
-                    class="bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-2xl text-xs font-bold animate-pulse">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-2xl text-xs font-bold">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Suggestion List -->
-                <div class="space-y-4">
-                    <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Masukan Terbaru
-                    </h3>
-                    <div class="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                        @forelse($suggestions as $s)
-                            <div class="glass-card p-4 rounded-2xl border-l-2 border-l-blue-500/50">
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="text-xs font-black text-slate-200">{{ $s->name ?? 'Anonim' }}</span>
-                                    <span
-                                        class="text-[9px] text-slate-600 font-mono">{{ $s->created_at->diffForHumans() }}</span>
-                                </div>
-                                <p class="text-[11px] text-slate-400 leading-relaxed italic">"{{ $s->suggestion }}"</p>
-                            </div>
-                        @empty
-                            <div
-                                class="text-center py-10 bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
-                                <p class="text-xs text-slate-600">Belum ada masukan untuk developer. <br> Jadilah yang
-                                    pertama memberikan ide atau laporan!</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-
-                <!-- Feedback Form -->
-                <div class="glass-card rounded-3xl p-6 border-t border-white/5">
-                    <h3 class="text-sm font-black text-white mb-6">Kirim Masukan</h3>
-                    <form action="{{ route('suggestions.store') }}" method="POST" class="space-y-4">
-                        @csrf
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label
-                                    class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Tag
-                                    CoC Anda (Wajib)</label>
-                                <div class="relative">
-                                    <span
-                                        class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-600 font-bold text-xs">#</span>
-                                    <input type="text" name="tag_id" required placeholder="P8Y28RRLL"
-                                        class="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-2.5 pl-7 pr-4 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors uppercase font-mono">
-                                </div>
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Nama
-                                    (Opsional)</label>
-                                <input type="text" name="name" placeholder="Contoh: Master COC"
-                                    class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors">
-                            </div>
-                        </div>
-
+            <!-- Feedback Form -->
+            <div class="glass-card rounded-3xl p-6 border-t border-white/5">
+                <h3 class="text-sm font-black text-white mb-6">Kirim Masukan</h3>
+                <form action="{{ route('suggestions.store') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label
-                                class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Pesan
-                                / Saran</label>
-                            <textarea name="suggestion" required rows="4"
-                                placeholder="Tuliskan ide fitur baru, laporan bug, atau saran lainnya..."
-                                class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors resize-none"></textarea>
+                                class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Tag
+                                CoC Anda (Wajib)</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-600 font-bold text-xs">#</span>
+                                <input type="text" name="tag_id" required placeholder="P8Y28RRLL"
+                                    class="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-2.5 pl-7 pr-4 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors uppercase font-mono">
+                            </div>
                         </div>
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Nama
+                                (Opsional)</label>
+                            <input type="text" name="name" placeholder="Contoh: Master COC"
+                                class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors">
+                        </div>
+                    </div>
 
-                        <button type="submit"
-                            class="w-full bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-widest py-3.5 rounded-xl transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
-                            <span>Kirim Masukan Ke Developer</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20"
-                                fill="currentColor">
-                                <path
-                                    d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
+                    <div>
+                        <label
+                            class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 ml-1">Pesan
+                            / Saran</label>
+                        <textarea name="suggestion" required rows="4"
+                            placeholder="Tuliskan ide fitur baru, laporan bug, atau saran lainnya..."
+                            class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500/50 transition-colors resize-none"></textarea>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-widest py-3.5 rounded-xl transition-all shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
+                        <span>Kirim Masukan Ke Developer</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                                d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                        </svg>
+                    </button>
+                </form>
             </div>
+        </div>
         </section>
 
         <!-- Footer -->
