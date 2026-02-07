@@ -57,10 +57,11 @@
             </p>
 
             <div class="max-w-lg mx-auto p-2 rounded-2xl glass mb-6 shadow-2xl">
-                <form action="{{ route('player.search') }}" method="GET" class="flex flex-col md:flex-row gap-2">
+                <form id="search-form" action="{{ route('player.search') }}" method="GET"
+                    class="flex flex-col md:flex-row gap-2">
                     <div class="relative flex-grow">
                         <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 font-bold">#</span>
-                        <input type="text" name="tag" placeholder="MASUKKAN TAG"
+                        <input id="tag-input" type="text" name="tag" placeholder="MASUKKAN TAG"
                             class="w-full bg-gray-800/50 border border-gray-700/50 rounded-xl py-4 pl-8 pr-4 outline-none focus:ring-2 focus:ring-orange-500 transition-all uppercase placeholder:text-gray-600 font-bold">
                     </div>
                     <button type="submit"
@@ -68,6 +69,14 @@
                         Analisis Sekarang
                     </button>
                 </form>
+            </div>
+
+            <!-- Recent Searches Section -->
+            <div id="recent-searches-container" class="hidden max-w-lg mx-auto mb-10">
+                <p class="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] mb-3">Terakhir Dicari</p>
+                <div id="recent-tags-list" class="flex flex-wrap justify-center gap-2">
+                    <!-- Pills injected via JS -->
+                </div>
             </div>
 
             @if(session('error'))
@@ -214,6 +223,44 @@
         <p class="text-gray-600 text-[8px] font-bold uppercase tracking-[0.4em]">&copy; {{ date('Y') }} COC STRATEGY
             ENGINE v3.0</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('search-form');
+            const input = document.getElementById('tag-input');
+            const container = document.getElementById('recent-searches-container');
+            const list = document.getElementById('recent-tags-list');
+
+            function loadRecentTags() {
+                const tags = JSON.parse(localStorage.getItem('recent_tags') || '[]');
+                if (tags.length > 0) {
+                    container.classList.remove('hidden');
+                    list.innerHTML = '';
+                    tags.forEach(tag => {
+                        const pill = document.createElement('button');
+                        pill.className = 'glass px-3 py-1.5 rounded-lg text-[10px] font-bold text-slate-400 hover:text-orange-500 hover:border-orange-500/30 transition-all uppercase';
+                        pill.textContent = '#' + tag;
+                        pill.onclick = () => {
+                            input.value = tag;
+                            form.submit();
+                        };
+                        list.appendChild(pill);
+                    });
+                }
+            }
+
+            form.onsubmit = function () {
+                const tag = input.value.trim().toUpperCase().replace('#', '');
+                if (tag) {
+                    let tags = JSON.parse(localStorage.getItem('recent_tags') || '[]');
+                    tags = [tag, ...tags.filter(t => t !== tag)].slice(0, 5);
+                    localStorage.setItem('recent_tags', JSON.stringify(tags));
+                }
+            };
+
+            loadRecentTags();
+        });
+    </script>
 </body>
 
 </html>

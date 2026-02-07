@@ -102,12 +102,44 @@
                     </div>
 
                     <div class="text-center md:text-left flex-grow">
-                        <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-white mb-1">
-                            {{ $player['name'] }}
-                        </h1>
-                        <p class="text-orange-500 font-mono text-lg font-bold mb-4 tracking-[0.2em]">
-                            <span class="opacity-50">#</span>{{ $player['tag'] }}
-                        </p>
+                        <div class="flex flex-col md:flex-row md:items-center gap-3 mb-4">
+                            <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-white">
+                                {{ $player['name'] }}
+                            </h1>
+                            <div
+                                class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-{{ $insights['evolution']['color'] }}-500/20 border border-{{ $insights['evolution']['color'] }}-500/30 text-{{ $insights['evolution']['color'] == 'yellow' ? 'yellow-500' : ($insights['evolution']['color'] == 'purple' ? 'purple-400' : ($insights['evolution']['color'] == 'blue' ? 'blue-400' : 'red-400')) }}">
+                                @if($insights['evolution']['icon'] === 'crown')
+                                    <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z" />
+                                    </svg>
+                                @elseif($insights['evolution']['icon'] === 'swords')
+                                    <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M6.92 5c-.26 0-.52.1-.71.29l-1.93 1.93c-.39.39-.39 1.03 0 1.42L8.59 13l-4.14 4.14c-.39.39-.39 1.03 0 1.42l1.93 1.93c.39.39 1.03.39 1.42 0L11.94 16.34l4.14 4.14c.39.39 1.03.39 1.42 0l1.93-1.93c.39-.39.39-1.03 0-1.42L15.29 13l4.29-4.29c.39-.39.39-1.03 0-1.42l-1.93-1.93c-.39-.39-1.03-.39-1.42 0L11.94 9.66 7.63 5.29C7.44 5.1 7.18 5 6.92 5z" />
+                                    </svg>
+                                @elseif($insights['evolution']['icon'] === 'hammer')
+                                    <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M19.78 6.41C19.91 6.54 20 6.7 20 6.88V7.12C20 7.3 19.91 7.46 19.78 7.59L17.59 9.78C17.46 9.91 17.3 20 17 20C16.7 20 16.54 19.91 16.41 19.78L4.22 7.59C4.09 7.46 4 7.3 4 7.12V6.88C4 6.7 4.09 6.54 4.22 6.41L6.41 4.22C6.54 4.09 6.7 4 6.88 4H7.12C7.3 4 7.46 4.09 7.59 4.22L9.78 6.41L19.78 6.41Z" />
+                                    </svg>
+                                @else
+                                    <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M22.7,19L13.6,9.9C14,8.8,14,7.6,13.4,6.5c-0.8-1.4-2.2-2.3-3.8-2.5C9.4,3.9,9,4,8.6,4.1c0.1,0,0.1,0.1,0.2,0.1l3.5,3.5l-2.1,2.1L6.7,6.3C6.7,6.2,6.6,6.2,6.6,6.1C6.5,6.5,6.4,7,6.4,7.4c0.2,1.6,1.1,3,2.5,3.8c1.1,0.6,2.3,0.7,3.4,0.3L21.4,21c0.4,0.4,1,0.4,1.4,0S23.1,19.4,22.7,19z" />
+                                    </svg>
+                                @endif
+                                <span>{{ $insights['evolution']['label'] }}</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                            <p class="text-orange-500 font-mono text-lg font-bold tracking-[0.2em]">
+                                <span class="opacity-50">#</span>{{ $player['tag'] }}
+                            </p>
+                            <p class="text-[10px] text-slate-500 italic font-medium">
+                                "{{ $insights['evolution']['description'] }}"
+                            </p>
+                        </div>
                         <div class="flex flex-wrap justify-center md:justify-start gap-2">
                             @if(isset($player['clan']))
                                 <div
@@ -127,22 +159,26 @@
                         <div class="space-y-0.5">
                             <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Exp Level</p>
                             <p class="text-xl font-black text-white leading-none">
-                                {{ $insights['playerStats']['level'] }}</p>
+                                {{ $insights['playerStats']['level'] }}
+                            </p>
                         </div>
                         <div class="space-y-0.5">
                             <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">War Stars</p>
                             <p class="text-xl font-black text-yellow-500 leading-none">
-                                {{ $insights['playerStats']['warStars'] }}</p>
+                                {{ $insights['playerStats']['warStars'] }}
+                            </p>
                         </div>
                         <div class="space-y-0.5">
                             <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Attack Wins</p>
                             <p class="text-xl font-black text-orange-400 leading-none">
-                                {{ $insights['playerStats']['attackWins'] }}</p>
+                                {{ $insights['playerStats']['attackWins'] }}
+                            </p>
                         </div>
                         <div class="space-y-0.5">
                             <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Highest Cups</p>
                             <p class="text-xl font-black text-blue-400 leading-none">
-                                {{ $insights['playerStats']['bestTrophies'] }}</p>
+                                {{ $insights['playerStats']['bestTrophies'] }}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -302,19 +338,23 @@
                         @if($epicGear->count() > 0)
                             <div class="space-y-2">
                                 <div class="flex items-center gap-2 px-1">
-                                    <span class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em]">Epic Equipment</span>
+                                    <span class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em]">Epic
+                                        Equipment</span>
                                     <div class="h-px flex-grow bg-indigo-500/20"></div>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                                     @foreach($epicGear as $item)
-                                        <div class="flex justify-between items-center p-3 rounded-xl border-indigo-500/50 bg-indigo-500/10 shadow-[inset_0_0_15px_rgba(99,102,241,0.2)] border transition-all text-xs">
+                                        <div
+                                            class="flex justify-between items-center p-3 rounded-xl border-indigo-500/50 bg-indigo-500/10 shadow-[inset_0_0_15px_rgba(99,102,241,0.2)] border transition-all text-xs">
                                             <span class="flex items-center gap-1.5 text-indigo-400 font-black">
                                                 <svg class="w-3 h-3 text-indigo-400" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                    <path
+                                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                                 </svg>
                                                 {{ $item['name'] }}
                                                 @if($item['isMax'])
-                                                    <span class="text-[8px] bg-indigo-500 text-white px-1 rounded-sm uppercase">Max</span>
+                                                    <span
+                                                        class="text-[8px] bg-indigo-500 text-white px-1 rounded-sm uppercase">Max</span>
                                                 @endif
                                             </span>
                                             <span class="font-mono text-indigo-400/80">
@@ -331,16 +371,20 @@
                         @if($commonGear->count() > 0)
                             <div class="space-y-2">
                                 <div class="flex items-center gap-2 px-1">
-                                    <span class="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em]">Common Equipment</span>
+                                    <span class="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em]">Common
+                                        Equipment</span>
                                     <div class="h-px flex-grow bg-slate-800/50"></div>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                                     @foreach($commonGear as $item)
-                                        <div class="flex justify-between items-center p-3 rounded-xl {{ $item['isMax'] ? 'bg-purple-500/10 border-purple-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all text-xs">
-                                            <span class="flex items-center gap-1.5 {{ $item['isMax'] ? 'text-purple-400 font-bold' : 'text-slate-400' }}">
+                                        <div
+                                            class="flex justify-between items-center p-3 rounded-xl {{ $item['isMax'] ? 'bg-purple-500/10 border-purple-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all text-xs">
+                                            <span
+                                                class="flex items-center gap-1.5 {{ $item['isMax'] ? 'text-purple-400 font-bold' : 'text-slate-400' }}">
                                                 {{ $item['name'] }}
                                                 @if($item['isMax'])
-                                                    <span class="text-[8px] bg-purple-500 text-white px-1 rounded-sm uppercase">Max</span>
+                                                    <span
+                                                        class="text-[8px] bg-purple-500 text-white px-1 rounded-sm uppercase">Max</span>
                                                 @endif
                                             </span>
                                             <span class="font-mono {{ $item['isMax'] ? 'text-purple-500' : 'text-slate-600' }}">
@@ -482,7 +526,87 @@
         </div>
 
         <!-- SUGGESTIONS & FEEDBACK SECTION -->
-        <section class="space-y-6 pt-10 border-t border-slate-800/50">
+        <!-- SHAREABLE CLAN CV CARD -->
+        <section class="mt-12 mb-10">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="w-2 h-6 bg-orange-500 rounded-full"></span>
+                <h2 class="text-2xl font-black text-white">CLAN RESUME / CV</h2>
+                <span class="text-[10px] bg-white/5 text-slate-500 px-3 py-1 rounded-full uppercase font-black tracking-widest ml-auto">Screenshot Ready</span>
+            </div>
+
+            <div class="relative group">
+                <!-- Glowing background effect tied to evolution color -->
+                <div class="absolute -inset-1 bg-gradient-to-r {{ $insights['evolution']['color'] == 'yellow' ? 'from-yellow-600 to-orange-600' : ($insights['evolution']['color'] == 'purple' ? 'from-purple-600 to-indigo-600' : ($insights['evolution']['color'] == 'blue' ? 'from-blue-600 to-cyan-600' : 'from-red-600 to-orange-600')) }} rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+
+                <div class="relative glass-card rounded-[2rem] p-8 border border-white/10 overflow-hidden shadow-2xl">
+                    <!-- CV Content -->
+                    <div class="flex flex-col md:flex-row justify-between gap-8 items-center">
+                        <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-{{ $insights['evolution']['color'] }}-500/20 border border-{{ $insights['evolution']['color'] }}-500/30 text-{{ $insights['evolution']['color'] == 'yellow' ? 'yellow-500' : ($insights['evolution']['color'] == 'purple' ? 'purple-400' : ($insights['evolution']['color'] == 'blue' ? 'blue-400' : 'red-400')) }} mb-4">
+                                @if($insights['evolution']['icon'] === 'crown')
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z" /></svg>
+                                @elseif($insights['evolution']['icon'] === 'swords')
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6.92 5c-.26 0-.52.1-.71.29l-1.93 1.93c-.39.39-.39 1.03 0 1.42L8.59 13l-4.14 4.14c-.39.39-.39 1.03 0 1.42l1.93 1.93c.39.39 1.03.39 1.42 0L11.94 16.34l4.14 4.14c.39.39 1.03.39 1.42 0l1.93-1.93c.39-.39.39-1.03 0-1.42L15.29 13l4.29-4.29c.39-.39.39-1.03 0-1.42l-1.93-1.93c-.39-.39-1.03-.39-1.42 0L11.94 9.66 7.63 5.29C7.44 5.1 7.18 5 6.92 5z" /></svg>
+                                @elseif($insights['evolution']['icon'] === 'hammer')
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19.78 6.41C19.91 6.54 20 6.7 20 6.88V7.12C20 7.3 19.91 7.46 19.78 7.59L17.59 9.78C17.46 9.91 17.3 20 17 20C16.7 20 16.54 19.91 16.41 19.78L4.22 7.59C4.09 7.46 4 7.3 4 7.12V6.88C4 6.7 4.09 6.54 4.22 6.41L6.41 4.22C6.54 4.09 6.7 4 6.88 4H7.12C7.3 4 7.46 4.09 7.59 4.22L9.78 6.41L19.78 6.41Z" /></svg>
+                                @else
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22.7,19L13.6,9.9C14,8.8,14,7.6,13.4,6.5c-0.8-1.4-2.2-2.3-3.8-2.5C9.4,3.9,9,4,8.6,4.1c0.1,0,0.1,0.1,0.2,0.1l3.5,3.5l-2.1,2.1L6.7,6.3C6.7,6.2,6.6,6.2,6.6,6.1C6.5,6.5,6.4,7,6.4,7.4c0.2,1.6,1.1,3,2.5,3.8c1.1,0.6,2.3,0.7,3.4,0.3L21.4,21c0.4,0.4,1,0.4,1.4,0S23.1,19.4,22.7,19z" /></svg>
+                                @endif
+                                <span class="tracking-[0.2em]">{{ $insights['evolution']['label'] }}</span>
+                            </div>
+                            <h3 class="text-4xl font-black text-white mb-1">{{ $player['name'] }}</h3>
+                            <p class="text-orange-500 font-mono text-xl font-bold tracking-[0.2em] mb-4">#{{ $player['tag'] }}</p>
+                            <div class="flex gap-4">
+                                <div class="text-center md:text-left">
+                                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">TH Level</p>
+                                    <p class="text-xl font-black text-white">TH {{ $player['townHallLevel'] }}</p>
+                                </div>
+                                <div class="text-center md:text-left border-l border-white/10 pl-4">
+                                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">War Status</p>
+                                    <p class="text-xl font-black {{ $insights['warReadiness']['color'] == 'green' ? 'text-green-500' : ($insights['warReadiness']['color'] == 'yellow' ? 'text-yellow-500' : 'text-red-500') }} uppercase">
+                                        {{ $insights['warReadiness']['status'] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-6">
+                            <div class="relative w-32 h-32 md:w-40 md:h-40">
+                                <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" class="stroke-slate-800" stroke-width="3" />
+                                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" class="{{ $insights['health']['color'] === 'green' ? 'stroke-green-500' : ($insights['health']['color'] === 'yellow' ? 'stroke-yellow-500' : 'stroke-red-500') }}" stroke-width="3" stroke-dasharray="{{ $insights['health']['score'] }}, 100" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-3xl md:text-4xl font-black text-white leading-none">{{ $insights['health']['score'] }}%</span>
+                                    <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Health</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <p class="text-[10px] text-slate-500 text-center md:text-left italic">
+                            *Dihasilkan secara otomatis oleh <strong>CoC Deep Insight System</strong>. Gunakan data ini untuk evaluasi anggota Clan.
+                        </p>
+                        <button onclick="copyToClipboard()" class="bg-white/5 hover:bg-white/10 text-white px-6 py-2.5 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2">
+                            <span>Copy Profile Link</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            function copyToClipboard() {
+                const url = window.location.href;
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Link profil telah disalin ke clipboard!');
+                });
+            }
+        </script>
             <div class="flex flex-col md:flex-row justify-between items-end gap-4">
                 <div>
                     <h2 class="text-2xl font-black flex items-center gap-3">

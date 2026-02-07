@@ -46,9 +46,12 @@ class PlayerInsightService
             'heroOrder' => $heroOrder
         ]);
 
+        $evolution = $this->calculateEvolutionLabel($health['score'], $rushStatus['isRushed'], $warReadiness['status_id']);
+
         return [
             'health' => $health,
             'rush' => $rushStatus,
+            'evolution' => $evolution,
             'heroOrder' => $heroOrder,
             'clan' => $clanContribution,
             'warReadiness' => $warReadiness,
@@ -65,6 +68,43 @@ class PlayerInsightService
                 'trophies' => $player['trophies'] ?? 0,
                 'bestTrophies' => $player['bestTrophies'] ?? 0,
             ]
+        ];
+    }
+
+    private function calculateEvolutionLabel(int $score, bool $isRushed, string $warStatus): array
+    {
+        if ($score >= 95 && !$isRushed && $warStatus === 'ready') {
+            return [
+                'label' => 'CoC Elite',
+                'description' => 'Akun Sempurna! Anda adalah standar emas pemain strategis.',
+                'color' => 'yellow',
+                'icon' => 'crown'
+            ];
+        }
+
+        if ($score >= 85 && $warStatus === 'ready') {
+            return [
+                'label' => 'War Veteran',
+                'description' => 'Siap Tempur! Anda memiliki fondasi kuat untuk segala jenis War.',
+                'color' => 'purple',
+                'icon' => 'swords'
+            ];
+        }
+
+        if (!$isRushed || $score >= 65) {
+            return [
+                'label' => 'Consistent Builder',
+                'description' => 'Pembangun Disiplin! Akun Anda berkembang dengan sangat seimbang.',
+                'color' => 'blue',
+                'icon' => 'hammer'
+            ];
+        }
+
+        return [
+            'label' => 'The Fixer',
+            'description' => 'Dalam Perbaikan! Anda sedang fokus membenahi kekuatan akun.',
+            'color' => 'red',
+            'icon' => 'wrench'
         ];
     }
 
