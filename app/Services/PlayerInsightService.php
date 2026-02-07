@@ -251,18 +251,8 @@ class PlayerInsightService
         if ($filtered->isEmpty())
             return ['score' => 0, 'list' => []];
 
-        $epicEquipment = [
-            'Giant Gauntlet',
-            'Frozen Arrow',
-            'Fireball',
-            'Spiky Ball',
-            'Magic Mirror',
-            'Rocket Spear',
-            'Electro Boots'
-        ];
-
-        $list = $filtered->map(function ($e) use ($epicEquipment) {
-            $isEpic = in_array($e['name'], $epicEquipment);
+        $list = $filtered->map(function ($e) {
+            $isEpic = $e['maxLevel'] >= 27;
             return [
                 'name' => $e['name'],
                 'level' => $e['level'],
