@@ -58,6 +58,14 @@
                 transform: translateX(100%) rotate(45deg);
             }
         }
+
+        .screenshot-mode .no-screenshot {
+            display: none !important;
+        }
+
+        .screenshot-mode body {
+            padding-bottom: 0 !important;
+        }
     </style>
 </head>
 
@@ -65,7 +73,7 @@
     <div class="max-w-5xl mx-auto px-4 py-8 space-y-8">
 
         <!-- Navbar -->
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between no-screenshot">
             <a href="{{ route('player.home') }}"
                 class="flex items-center gap-2 text-slate-400 hover:text-white transition-all text-sm font-bold">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
@@ -182,6 +190,14 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- CV Action Bar -->
+            <div class="flex justify-between items-center no-screenshot">
+                <button onclick="toggleScreenshotMode()" id="screenshotToggleBtn"
+                    class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all">
+                    Enable Screenshot Mode
+                </button>
             </div>
 
             <!-- Stats Grid: Health, War, Rush -->
@@ -304,7 +320,8 @@
                                                 </div>
                                                 <div class="min-w-0">
                                                     <p class="text-[10px] font-black text-slate-200 leading-tight truncate">
-                                                        {{ $eq['name'] }}</p>
+                                                        {{ $eq['name'] }}
+                                                    </p>
                                                     <p class="text-[8px] font-mono text-slate-500 mt-0.5">Lv {{ $eq['level'] }}</p>
                                                 </div>
                                             </div>
@@ -329,14 +346,16 @@
                         @foreach($insights['spells']['list'] as $spell)
                             <div
                                 class="flex justify-between items-center p-3 rounded-xl {{ $spell['level'] >= $spell['maxLevel'] ? 'bg-blue-500/10 border-blue-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all text-xs">
-                                <span class="{{ $spell['level'] >= $spell['maxLevel'] ? 'text-blue-400 font-bold' : 'text-slate-400' }}">
+                                <span
+                                    class="{{ $spell['level'] >= $spell['maxLevel'] ? 'text-blue-400 font-bold' : 'text-slate-400' }}">
                                     {{ $spell['name'] }}
                                     @if($spell['level'] >= $spell['maxLevel'])
                                         <span
                                             class="ml-1 text-[8px] bg-blue-500 text-white px-1 rounded-sm uppercase">Max</span>
                                     @endif
                                 </span>
-                                <span class="font-mono {{ $spell['level'] >= $spell['maxLevel'] ? 'text-blue-500' : 'text-slate-600' }}">Lv
+                                <span
+                                    class="font-mono {{ $spell['level'] >= $spell['maxLevel'] ? 'text-blue-500' : 'text-slate-600' }}">Lv
                                     {{ $spell['level'] }} /
                                     {{ $spell['maxLevel'] }}</span>
                             </div>
@@ -381,7 +400,8 @@
                                                 </div>
                                                 <p
                                                     class="text-[10px] font-black {{ $item['isMax'] ? 'text-indigo-400' : 'text-slate-300' }} tracking-tight leading-tight mb-1">
-                                                    {{ $item['name'] }}</p>
+                                                    {{ $item['name'] }}
+                                                </p>
                                                 <div
                                                     class="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5">
                                                     <span class="text-[8px] font-mono text-slate-500">Lv
@@ -416,7 +436,8 @@
                                             @endif
                                             <p
                                                 class="text-[10px] font-bold {{ $item['isMax'] ? 'text-purple-400' : 'text-slate-400' }} leading-tight mb-1 truncate w-full">
-                                                {{ $item['name'] }}</p>
+                                                {{ $item['name'] }}
+                                            </p>
                                             <div
                                                 class="inline-block bg-black/20 px-2 py-0.5 rounded-full border border-white/5">
                                                 <span class="text-[8px] font-mono text-slate-600">Lv {{ $item['level'] }}</span>
@@ -448,10 +469,12 @@
                     <!-- 1. HERO SECTION -->
                     @if(count($recommendations['heroes']) > 0)
                         <div class="space-y-3">
-                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-1">Prioritas Hero</span>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-1">Prioritas
+                                Hero</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 @foreach($recommendations['heroes'] as $rec)
-                                    <div class="glass-card p-3.5 rounded-2xl border-l-[3px] border-l-red-500 transition-all hover:bg-white/5">
+                                    <div
+                                        class="glass-card p-3.5 rounded-2xl border-l-[3px] border-l-red-500 transition-all hover:bg-white/5">
                                         <div class="flex justify-between items-center mb-1">
                                             <h4 class="text-xs font-black text-slate-300">{{ $rec['name'] }}</h4>
                                             <span class="text-[8px] font-bold text-red-500/80">{{ $rec['priority'] }}</span>
@@ -466,13 +489,16 @@
                     <!-- 2. GEAR SECTION -->
                     @if(count($recommendations['gear']) > 0)
                         <div class="space-y-3">
-                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-1">Prioritas Equipment</span>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-1">Prioritas
+                                Equipment</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 @foreach($recommendations['gear'] as $gp)
-                                    <div class="glass-card p-3.5 rounded-2xl border-l-[3px] border-l-indigo-500 transition-all hover:bg-white/5">
+                                    <div
+                                        class="glass-card p-3.5 rounded-2xl border-l-[3px] border-l-indigo-500 transition-all hover:bg-white/5">
                                         <div class="flex justify-between items-center mb-1">
                                             <h4 class="text-xs font-black text-indigo-400/90">{{ $gp['name'] }}</h4>
-                                            <span class="bg-indigo-500 text-white text-[8px] px-1.5 py-0.5 rounded font-black">{{ $gp['rank'] }}</span>
+                                            <span
+                                                class="bg-indigo-500 text-white text-[8px] px-1.5 py-0.5 rounded font-black">{{ $gp['rank'] }}</span>
                                         </div>
                                         <p class="text-[10px] text-slate-500 leading-snug">{{ $gp['reason'] }}</p>
                                     </div>
@@ -484,10 +510,12 @@
                     <!-- 3. TROOPS & SPELLS SECTION -->
                     @if(count($recommendations['troops']) > 0 || count($recommendations['spells']) > 0)
                         <div class="space-y-3">
-                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-1">Pasukan & Mantra</span>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-1">Pasukan &
+                                Mantra</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 @foreach(array_merge($recommendations['troops'], $recommendations['spells']) as $rec)
-                                    <div class="glass-card p-3.5 rounded-2xl border-l-[3px] border-l-amber-500 transition-all hover:bg-white/5">
+                                    <div
+                                        class="glass-card p-3.5 rounded-2xl border-l-[3px] border-l-amber-500 transition-all hover:bg-white/5">
                                         <div class="flex justify-between items-center mb-1">
                                             <h4 class="text-xs font-black text-slate-300">{{ $rec['name'] }}</h4>
                                             <span class="text-[8px] font-bold text-amber-500/80">UP</span>
@@ -606,108 +634,185 @@
         </div>
 
         <!-- SUGGESTIONS & FEEDBACK SECTION -->
-        <!-- SHAREABLE CLAN CV CARD -->
-        <section class="mt-12 mb-10">
-            <div class="flex items-center gap-3 mb-6">
+        <!-- CLAN RESUME / CV SECTION -->
+        <section id="clan-cv" class="mt-12 mb-10">
+            <div class="flex items-center gap-3 mb-6 no-screenshot">
                 <span class="w-2 h-6 bg-orange-500 rounded-full"></span>
-                <h2 class="text-2xl font-black text-white">CLAN RESUME / CV</h2>
-                <span
-                    class="text-[10px] bg-white/5 text-slate-500 px-3 py-1 rounded-full uppercase font-black tracking-widest ml-auto">Screenshot
+                <h2 class="text-2xl font-black text-white italic tracking-tighter">CLAN RESUME / CV</h2>
+                <span id="screenshot-indicator"
+                    class="hidden text-[10px] bg-orange-500/10 text-orange-500 px-3 py-1 rounded-full uppercase font-black tracking-widest ml-auto border border-orange-500/20">Screenshot
                     Ready</span>
             </div>
 
             <div class="relative group">
-                <!-- Glowing background effect tied to evolution color -->
                 <div
-                    class="absolute -inset-1 bg-gradient-to-r {{ $insights['evolution']['color'] == 'yellow' ? 'from-yellow-600 to-orange-600' : ($insights['evolution']['color'] == 'purple' ? 'from-purple-600 to-indigo-600' : ($insights['evolution']['color'] == 'blue' ? 'from-blue-600 to-cyan-600' : 'from-red-600 to-orange-600')) }} rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200">
+                    class="absolute -inset-1 bg-gradient-to-r from-orange-600/20 to-orange-900/10 rounded-[2.5rem] blur opacity-40">
                 </div>
 
-                <div class="relative glass-card rounded-[2rem] p-8 border border-white/10 overflow-hidden shadow-2xl">
-                    <!-- CV Content -->
-                    <div class="flex flex-col md:flex-row justify-between gap-8 items-center">
-                        <div class="flex flex-col items-center md:items-start text-center md:text-left">
-                            <div
-                                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-{{ $insights['evolution']['color'] }}-500/20 border border-{{ $insights['evolution']['color'] }}-500/30 text-{{ $insights['evolution']['color'] == 'yellow' ? 'yellow-500' : ($insights['evolution']['color'] == 'purple' ? 'purple-400' : ($insights['evolution']['color'] == 'blue' ? 'blue-400' : 'red-400')) }} mb-4">
-                                @if($insights['evolution']['icon'] === 'crown')
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                                        <path
-                                            d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z" />
-                                    </svg>
-                                @elseif($insights['evolution']['icon'] === 'swords')
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                                        <path
-                                            d="M6.92 5c-.26 0-.52.1-.71.29l-1.93 1.93c-.39.39-.39 1.03 0 1.42L8.59 13l-4.14 4.14c-.39.39-.39 1.03 0 1.42l1.93 1.93c.39.39 1.03.39 1.42 0L11.94 16.34l4.14 4.14c.39.39 1.03.39 1.42 0l1.93-1.93c.39-.39.39-1.03 0-1.42L15.29 13l4.29-4.29c.39-.39.39-1.03 0-1.42l-1.93-1.93c-.39-.39-1.03-.39-1.42 0L11.94 9.66 7.63 5.29C7.44 5.1 7.18 5 6.92 5z" />
-                                    </svg>
-                                @elseif($insights['evolution']['icon'] === 'hammer')
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                                        <path
-                                            d="M19.78 6.41C19.91 6.54 20 6.7 20 6.88V7.12C20 7.3 19.91 7.46 19.78 7.59L17.59 9.78C17.46 9.91 17.3 20 17 20C16.7 20 16.54 19.91 16.41 19.78L4.22 7.59C4.09 7.46 4 7.3 4 7.12V6.88C4 6.7 4.09 6.54 4.22 6.41L6.41 4.22C6.54 4.09 6.7 4 6.88 4H7.12C7.3 4 7.46 4.09 7.59 4.22L9.78 6.41L19.78 6.41Z" />
-                                    </svg>
-                                @else
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                                        <path
-                                            d="M22.7,19L13.6,9.9C14,8.8,14,7.6,13.4,6.5c-0.8-1.4-2.2-2.3-3.8-2.5C9.4,3.9,9,4,8.6,4.1c0.1,0,0.1,0.1,0.2,0.1l3.5,3.5l-2.1,2.1L6.7,6.3C6.7,6.2,6.6,6.2,6.6,6.1C6.5,6.5,6.4,7,6.4,7.4c0.2,1.6,1.1,3,2.5,3.8c1.1,0.6,2.3,0.7,3.4,0.3L21.4,21c0.4,0.4,1,0.4,1.4,0S23.1,19.4,22.7,19z" />
-                                    </svg>
-                                @endif
-                                <span class="tracking-[0.2em]">{{ $insights['evolution']['label'] }}</span>
-                            </div>
-                            <h3 class="text-4xl font-black text-white mb-1">{{ $player['name'] }}</h3>
-                            <p class="text-orange-500 font-mono text-xl font-bold tracking-[0.2em] mb-4">
-                                #{{ $player['tag'] }}</p>
-                            <div class="flex gap-4">
-                                <div class="text-center md:text-left">
-                                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">TH Level
-                                    </p>
-                                    <p class="text-xl font-black text-white">TH {{ $player['townHallLevel'] }}</p>
-                                </div>
-                                <div class="text-center md:text-left border-l border-white/10 pl-4">
-                                    <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">War Status
-                                    </p>
-                                    <p
-                                        class="text-xl font-black {{ $insights['warReadiness']['color'] == 'green' ? 'text-green-500' : ($insights['warReadiness']['color'] == 'yellow' ? 'text-yellow-500' : 'text-red-500') }} uppercase">
-                                        {{ $insights['warReadiness']['status'] }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                <div
+                    class="relative bg-[#161920] rounded-[2.5rem] p-8 md:p-12 border border-white/5 overflow-hidden shadow-2xl">
+                    <!-- Background Branding -->
+                    <div class="absolute top-0 right-0 p-8 opacity-5 select-none pointer-events-none">
+                        <h1 class="text-9xl font-black italic">COC CV</h1>
+                    </div>
 
-                        <div class="flex items-center gap-6">
-                            <div class="relative w-32 h-32 md:w-40 md:h-40">
+                    <div class="relative z-10">
+                        <!-- Top Row: Name and Health -->
+                        <div class="flex flex-col md:flex-row justify-between items-center gap-10 mb-12">
+                            <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div
+                                        class="px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                                        </svg>
+                                        {{ $insights['evolution']['label'] }}
+                                    </div>
+                                    @if($insights['cv']['badges']['fullyMaxed'])
+                                        <div
+                                            class="px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-[10px] font-black text-green-400 uppercase tracking-[0.2em]">
+                                            FULLY MAXED
+                                        </div>
+                                    @endif
+                                </div>
+                                <h3 class="text-6xl font-black text-white mb-2 tracking-tighter">{{ $player['name'] }}
+                                </h3>
+                                <p class="text-orange-500 font-mono text-2xl font-bold tracking-[0.3em] mb-8">
+                                    <span class="opacity-30">#</span>{{ $player['tag'] }}
+                                </p>
+
+                                <div class="grid grid-cols-2 gap-8">
+                                    <div class="space-y-1">
+                                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Town
+                                            Hall</p>
+                                        <p class="text-3xl font-black text-white">TH {{ $player['townHallLevel'] }}</p>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">War
+                                            Status</p>
+                                        <p
+                                            class="text-3xl font-black text-{{ $insights['cv']['health']['color'] }}-500 uppercase">
+                                            {{ $insights['cv']['health']['label'] }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Circular Health -->
+                            <div class="relative w-48 h-48 md:w-56 md:h-56">
                                 <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                                    <path
-                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                        fill="none" class="stroke-slate-800" stroke-width="3" />
-                                    <path
-                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                        fill="none"
-                                        class="{{ $insights['health']['color'] === 'green' ? 'stroke-green-500' : ($insights['health']['color'] === 'yellow' ? 'stroke-yellow-500' : 'stroke-red-500') }}"
-                                        stroke-width="3" stroke-dasharray="{{ $insights['health']['score'] }}, 100" />
+                                    <circle cx="18" cy="18" r="15.915" fill="none" class="stroke-slate-800/50"
+                                        stroke-width="2.5" />
+                                    <circle cx="18" cy="18" r="15.915" fill="none"
+                                        class="stroke-{{ $insights['cv']['health']['color'] }}-500 transition-all duration-1000 ease-out"
+                                        stroke-width="2.5"
+                                        stroke-dasharray="{{ $insights['cv']['health']['score'] }}, 100" />
                                 </svg>
                                 <div class="absolute inset-0 flex flex-col items-center justify-center">
                                     <span
-                                        class="text-3xl md:text-4xl font-black text-white leading-none">{{ $insights['health']['score'] }}%</span>
+                                        class="text-5xl md:text-6xl font-black text-white leading-none">{{ $insights['cv']['health']['score'] }}%</span>
                                     <span
-                                        class="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Health</span>
+                                        class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-2">HEALTH</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div
-                        class="mt-8 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p class="text-[10px] text-slate-500 text-center md:text-left italic">
-                            *Dihasilkan secara otomatis oleh <strong>CoC Deep Insight System</strong>. Gunakan data ini
-                            untuk evaluasi anggota Clan.
-                        </p>
-                        <button onclick="copyToClipboard()"
-                            class="bg-white/5 hover:bg-white/10 text-white px-6 py-2.5 rounded-xl border border-white/10 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2">
-                            <span>Copy Profile Link</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                            </svg>
-                        </button>
+                        <!-- Collection Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                            <!-- Hero Badges -->
+                            <div class="bg-slate-900/40 p-5 rounded-3xl border border-white/5">
+                                <h4
+                                    class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center justify-between">
+                                    HEROES
+                                    @if($insights['cv']['badges']['heroMax'])
+                                        <span class="bg-green-500/10 text-green-500 text-[8px] px-2 py-0.5 rounded-sm">ALL
+                                            MAXED</span>
+                                    @endif
+                                </h4>
+                                <div class="space-y-3">
+                                    @foreach($insights['heroes']['list'] as $hero)
+                                        <div class="flex justify-between items-center">
+                                            <span
+                                                class="text-xs font-bold {{ $hero['isMax'] ? 'text-orange-400' : 'text-slate-300' }}">{{ $hero['name'] }}</span>
+                                            <span class="text-[10px] font-mono text-slate-500">{{ $hero['level'] }} /
+                                                {{ $hero['maxLevel'] }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Troop Status -->
+                            <div class="bg-slate-900/40 p-5 rounded-3xl border border-white/5">
+                                <h4
+                                    class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center justify-between">
+                                    SUPER TROOPS
+                                    @if($insights['cv']['badges']['troopMax'])
+                                        <span class="bg-green-500/10 text-green-500 text-[8px] px-2 py-0.5 rounded-sm">ALL
+                                            MAXED</span>
+                                    @endif
+                                </h4>
+                                <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                                    @foreach(array_slice($insights['cv']['superTroops'], 0, 10) as $st)
+                                        <div class="flex items-center justify-between">
+                                            <span
+                                                class="text-[9px] font-medium text-slate-400 truncate pr-2">{{ $st['name'] }}</span>
+                                            <span
+                                                class="text-[8px] font-black {{ $st['isMax'] ? 'text-orange-400' : 'text-slate-600' }}">{{ $st['status'] }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Gear & Gear Max -->
+                            <div class="bg-slate-900/40 p-5 rounded-3xl border border-white/5">
+                                <h4
+                                    class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center justify-between">
+                                    EQUIPMENT & SPELLS
+                                    @if($insights['cv']['badges']['gearMax'])
+                                        <span class="bg-green-500/10 text-green-500 text-[8px] px-2 py-0.5 rounded-sm">GEAR
+                                            MAX</span>
+                                    @endif
+                                </h4>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center pb-2 border-b border-white/5">
+                                        <span class="text-[10px] text-slate-400">Total Gear Level</span>
+                                        <span
+                                            class="text-xs font-black text-white">{{ $insights['equipment']['score'] }}%</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[10px] text-slate-400">Spell Proficiency</span>
+                                        <span
+                                            class="text-xs font-black text-white">{{ $insights['spells']['readinessScore'] }}%</span>
+                                    </div>
+                                    @if($insights['cv']['badges']['spellMax'])
+                                        <div class="text-center pt-2">
+                                            <span class="text-[9px] font-black text-blue-400 uppercase tracking-widest">ALL
+                                                SPELLS MAXED</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CV Footer -->
+                        <div
+                            class="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-white/5">
+                            <p class="text-[10px] text-slate-500 italic max-w-md text-center md:text-left">
+                                Dihasilkan secara otomatis oleh <strong>CoC Deep Insight System</strong>. Evaluasi
+                                strategis berbasis data aktual TH {{ $player['townHallLevel'] }}.
+                            </p>
+                            <div class="flex items-center gap-4 no-screenshot">
+                                <button onclick="copyToClipboard()"
+                                    class="bg-white/5 hover:bg-white/10 text-white px-8 py-3 rounded-2xl border border-white/10 text-xs font-black uppercase tracking-widest transition-all shadow-xl flex items-center gap-3">
+                                    <span>Copy Profile Link</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -719,9 +824,26 @@
                 navigator.clipboard.writeText(url).then(() => {
                     alert('Link profil telah disalin ke clipboard!');
                 });
-    }
+            }
+
+            function toggleScreenshotMode() {
+                const container = document.querySelector('.max-w-5xl');
+                const isScreenshot = document.body.classList.toggle('screenshot-mode');
+                const btn = document.getElementById('screenshotToggleBtn');
+                const indicator = document.getElementById('screenshot-indicator');
+
+                if (isScreenshot) {
+                    btn.innerText = 'Exit Screenshot Mode';
+                    indicator.classList.remove('hidden');
+                    // Scroll to CV
+                    document.getElementById('clan-cv').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    btn.innerText = 'Enable Screenshot Mode';
+                    indicator.classList.add('hidden');
+                }
+            }
         </script>
-        <div class="flex flex-col md:flex-row justify-between items-end gap-4">
+        <div class="flex flex-col md:flex-row justify-between items-end gap-4 no-screenshot">
             <div>
                 <h2 class="text-2xl font-black flex items-center gap-3">
                     <span class="w-2 h-6 bg-blue-500 rounded-full"></span>

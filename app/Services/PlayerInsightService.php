@@ -7,15 +7,18 @@ class PlayerInsightService
     protected WarReadinessService $warService;
     protected UpgradePriorityService $priorityService;
     protected StrategyRecommendationService $strategyService;
+    protected CocMaxLevelService $maxLevelService;
 
     public function __construct(
         WarReadinessService $warService,
         UpgradePriorityService $priorityService,
-        StrategyRecommendationService $strategyService
+        StrategyRecommendationService $strategyService,
+        CocMaxLevelService $maxLevelService
     ) {
         $this->warService = $warService;
         $this->priorityService = $priorityService;
         $this->strategyService = $strategyService;
+        $this->maxLevelService = $maxLevelService;
     }
 
     /**
@@ -59,6 +62,7 @@ class PlayerInsightService
         );
 
         return [
+            'cv' => $this->calculateCvInsights($player, $th, $heroData, $troopData, $spellData, $equipmentData),
             'health' => $health,
             'rush' => $rushStatus,
             'evolution' => $evolution,
@@ -132,36 +136,8 @@ class PlayerInsightService
      */
     private function getThMaxLevel(string $type, string $name, int $th, int $apiMax): int
     {
-        if ($type === 'hero') {
-            $heroMaxes = [
-                'Barbarian King' => [7 => 10, 8 => 20, 9 => 30, 10 => 40, 11 => 50, 12 => 65, 13 => 75, 14 => 80, 15 => 90, 16 => 95],
-                'Archer Queen' => [9 => 30, 10 => 40, 11 => 50, 12 => 65, 13 => 75, 14 => 80, 15 => 90, 16 => 95],
-                'Grand Warden' => [11 => 20, 12 => 40, 13 => 50, 14 => 55, 15 => 65, 16 => 70],
-                'Royal Champion' => [13 => 25, 14 => 30, 15 => 40, 16 => 45]
-            ];
-            return $heroMaxes[$name][$th] ?? $apiMax;
-        }
-
-        if ($type === 'troop') {
-            $troopMaxes = [
-                'Balloon' => [9 => 6, 10 => 7, 11 => 8, 12 => 9, 13 => 9, 14 => 10, 15 => 10, 16 => 11],
-                'Dragon' => [9 => 4, 10 => 5, 11 => 6, 12 => 7, 13 => 8, 14 => 9, 15 => 10, 16 => 11],
-                'Hog Rider' => [9 => 5, 10 => 6, 11 => 7, 12 => 9, 13 => 10, 14 => 11, 15 => 12, 16 => 13],
-                'Electro Dragon' => [11 => 2, 12 => 3, 13 => 4, 14 => 5, 15 => 6, 16 => 7],
-            ];
-            return $troopMaxes[$name][$th] ?? $apiMax;
-        }
-
-        if ($type === 'spell') {
-            $spellMaxes = [
-                'Heal Spell' => [9 => 6, 10 => 7, 11 => 7, 12 => 8, 13 => 10, 16 => 11],
-                'Rage Spell' => [9 => 5, 10 => 5, 11 => 6, 12 => 6, 16 => 7],
-                'Poison Spell' => [9 => 3, 10 => 4, 11 => 5, 16 => 6],
-            ];
-            return $spellMaxes[$name][$th] ?? $apiMax;
-        }
-
-        return $apiMax;
+        $customMax = $this->maxLevelService->getMaxLevel($type, $name, $th);
+        return $customMax > 0 ? $customMax : $apiMax;
     }
 
     private function calculateAccountHealth(array $heroes, array $troops, array $spells): array
@@ -383,8 +359,163 @@ class PlayerInsightService
         ];
     }
 
-    public function getRecommendations(array $player, array $insights): array
+    private function calculateCvInsights(array $player, int $th, array $heroes, array $troops, array $spells, array $equipment): array
     {
-        return $this->priorityService->getPriorities($player, $insights);
+        $siegeData = $this->analyzeSiege($player['troops'] ?? [], $th);
+        $petData = $this->analyzePets($player['troops'] ?? [], $th);
+        $superTroopData = $this->analyzeSuperTroops($player['troops'] ?? [], $th);
+
+        $heroMaxed = collect($heroes['list'])->every(fn($h) => $h['isMax']);
+        $troopMaxed = collect($troops['list'])->every(fn($t) => $t['isMax']);
+        $spellMaxed = collect($spells['list'])->every(fn($s) => $s['isMax']);
+        $gearMaxed = collect($equipment['list'])->every(fn($e) => $e['isMax']);
+        $siegeMaxed = collect($siegeData['list'])->every(fn($s) => $s['isMax']);
+        $petMaxed = $th >= 14 ? collect($petData['list'])->every(fn($p) => $p['isMax']) : true;
+
+        $heroWeight = 0.30;
+        $troopWeight = 0.25;
+        $spellWeight = 0.10;
+        $siegeWeight = 0.10;
+        $petWeight = 0.10;
+        $gearWeight = 0.15;
+
+        $heroScore = $heroes['averageProgress'] ?? 0;
+        $troopScore = $troops['readinessScore'] ?? 0;
+        $spellScore = $spells['readinessScore'] ?? 0;
+        $siegeScore = $siegeData['readinessScore'] ?? 0;
+        $petScore = $petData['readinessScore'] ?? 0;
+        $gearScore = $equipment['score'] ?? 0;
+
+        $cvHealth = (
+            ($heroScore * $heroWeight) +
+            ($troopScore * $troopWeight) +
+            ($spellScore * $spellWeight) +
+            ($siegeScore * $siegeWeight) +
+            ($petScore * $petWeight) +
+            ($gearScore * $gearWeight)
+        );
+
+        $healthLabel = 'WAR READY';
+        $healthColor = 'green';
+        if ($cvHealth < 70) {
+            $healthLabel = 'NOT READY';
+            $healthColor = 'red';
+        } elseif ($cvHealth < 85) {
+            $healthLabel = 'SEMI READY';
+            $healthColor = 'yellow';
+        }
+
+        return [
+            'health' => [
+                'score' => round($cvHealth),
+                'label' => $healthLabel,
+                'color' => $healthColor
+            ],
+            'badges' => [
+                'heroMax' => $heroMaxed,
+                'troopMax' => $troopMaxed,
+                'spellMax' => $spellMaxed,
+                'gearMax' => $gearMaxed,
+                'fullyMaxed' => ($heroMaxed && $troopMaxed && $spellMaxed && $gearMaxed && $siegeMaxed && $petMaxed)
+            ],
+            'superTroops' => $superTroopData,
+            'siege' => $siegeData,
+            'pets' => $petData
+        ];
+    }
+
+    private function analyzeSiege(array $troops, int $th): array
+    {
+        $sieges = ['Wall Wrecker', 'Battle Blimp', 'Stone Slammer', 'Siege Barracks', 'Log Launcher', 'Flame Finger', 'Battle Drill'];
+        $filtered = collect($troops)->filter(fn($t) => in_array($t['name'], $sieges));
+
+        if ($filtered->isEmpty())
+            return ['readinessScore' => 0, 'list' => []];
+
+        $list = $filtered->map(function ($t) use ($th) {
+            $maxLevel = $this->getThMaxLevel('siege', $t['name'], $th, $t['maxLevel']);
+            return [
+                'name' => $t['name'],
+                'level' => $t['level'],
+                'maxLevel' => $maxLevel,
+                'isMax' => $t['level'] >= $maxLevel,
+                'progress' => round(($t['level'] / max(1, $maxLevel)) * 100),
+            ];
+        });
+
+        return [
+            'readinessScore' => round($list->avg('progress') ?? 0),
+            'list' => $list->all()
+        ];
+    }
+
+    private function analyzePets(array $troops, int $th): array
+    {
+        $pets = ['L.A.S.S.I', 'Electro Owl', 'Mighty Yak', 'Unicorn', 'Frosty', 'Diggy', 'Poison Lizard', 'Phoenix', 'Spirit Fox'];
+        $filtered = collect($troops)->filter(fn($t) => in_array($t['name'], $pets));
+
+        if ($filtered->isEmpty())
+            return ['readinessScore' => 0, 'list' => []];
+
+        $list = $filtered->map(function ($t) use ($th) {
+            $maxLevel = $this->getThMaxLevel('pet', $t['name'], $th, $t['maxLevel']);
+            return [
+                'name' => $t['name'],
+                'level' => $t['level'],
+                'maxLevel' => $maxLevel,
+                'isMax' => $t['level'] >= $maxLevel,
+                'progress' => round(($t['level'] / max(1, $maxLevel)) * 100),
+            ];
+        });
+
+        return [
+            'readinessScore' => round($list->avg('progress') ?? 0),
+            'list' => $list->all()
+        ];
+    }
+
+    private function analyzeSuperTroops(array $troops, int $th): array
+    {
+        $superTroopsToRecognize = [
+            'Super Barbarian',
+            'Super Archer',
+            'Super Giant',
+            'Super Wall Breaker',
+            'Sneaky Goblin',
+            'Super Miner',
+            'Rocket Balloon',
+            'Inferno Dragon',
+            'Super Valkyrie',
+            'Super Witch',
+            'Ice Hound',
+            'Super Bowler',
+            'Super Dragon',
+            'Root Rider',
+            'Meteor Golem'
+        ];
+
+        $normalTroopMap = collect($troops)->keyBy('name');
+
+        return collect($superTroopsToRecognize)->map(function ($stName) use ($normalTroopMap, $th) {
+            $baseName = $this->maxLevelService->getBaseTroopForSuper($stName) ?? $stName;
+            $baseTroop = $normalTroopMap[$baseName] ?? null;
+
+            if (!$baseTroop) {
+                return [
+                    'name' => $stName,
+                    'status' => 'NOT UNLOCKED',
+                    'isMax' => false
+                ];
+            }
+
+            $maxLevel = $this->getThMaxLevel('troop', $baseName, $th, $baseTroop['maxLevel']);
+            $isMax = $baseTroop['level'] >= $maxLevel;
+
+            return [
+                'name' => $stName,
+                'status' => $isMax ? 'MAX' : 'NOT MAX',
+                'isMax' => $isMax
+            ];
+        })->all();
     }
 }
