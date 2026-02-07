@@ -439,57 +439,63 @@
 
             <!-- LEFT COLUMN: UPGRADE PRIORITY -->
             <div class="lg:col-span-1 space-y-8">
-                <section class="space-y-6">
-                    <h2 class="text-xl font-black flex items-center gap-3 px-1">
-                        <span class="w-2 h-6 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.5)]"></span>
-                        REKOMENDASI UPGRADE
-                    </h2>
+                <section class="space-y-8">
+                    <div class="flex items-center gap-3">
+                        <div class="w-1.5 h-6 bg-red-500 rounded-full shadow-[0_0_12px_rgba(239,68,68,0.5)]"></div>
+                        <h2 class="text-xl font-black tracking-tight text-white uppercase">Saran Upgrade</h2>
+                    </div>
 
                     <!-- 1. HERO SECTION -->
                     @if(count($recommendations['heroes']) > 0)
                         <div class="space-y-3">
-                            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Upgrade Hero</h3>
-                            @foreach($recommendations['heroes'] as $rec)
-                                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-red-500 transition-all hover:translate-x-1">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <h4 class="font-bold text-slate-200">{{ $rec['name'] }}</h4>
-                                        <span class="text-[9px] font-black px-2 py-0.5 rounded-lg bg-red-500/10 text-red-500">{{ $rec['priority'] }}</span>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-1">Prioritas Hero</span>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                @foreach($recommendations['heroes'] as $rec)
+                                    <div class="glass-card p-3.5 rounded-2xl border-l-[3px] border-l-red-500 transition-all hover:bg-white/5">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <h4 class="text-xs font-black text-slate-300">{{ $rec['name'] }}</h4>
+                                            <span class="text-[8px] font-bold text-red-500/80">{{ $rec['priority'] }}</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-500 leading-snug">{{ $rec['reason'] }}</p>
                                     </div>
-                                    <p class="text-[11px] text-slate-500 leading-relaxed">{{ $rec['reason'] }}</p>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
                     @endif
 
                     <!-- 2. GEAR SECTION -->
                     @if(count($recommendations['gear']) > 0)
                         <div class="space-y-3">
-                            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Upgrade Equipment</h3>
-                            @foreach($recommendations['gear'] as $gp)
-                                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-indigo-500 transition-all hover:translate-x-1">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <h4 class="font-bold text-indigo-300">{{ $gp['name'] }}</h4>
-                                        <span class="text-[9px] font-black px-2 py-0.5 rounded-lg bg-indigo-500 text-white shadow-lg">{{ $gp['rank'] }}</span>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-1">Prioritas Equipment</span>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                @foreach($recommendations['gear'] as $gp)
+                                    <div class="glass-card p-3.5 rounded-2xl border-l-[3px] border-l-indigo-500 transition-all hover:bg-white/5">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <h4 class="text-xs font-black text-indigo-400/90">{{ $gp['name'] }}</h4>
+                                            <span class="bg-indigo-500 text-white text-[8px] px-1.5 py-0.5 rounded font-black">{{ $gp['rank'] }}</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-500 leading-snug">{{ $gp['reason'] }}</p>
                                     </div>
-                                    <p class="text-[10px] text-slate-400 leading-relaxed">{{ $gp['reason'] }}</p>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
                     @endif
 
                     <!-- 3. TROOPS & SPELLS SECTION -->
                     @if(count($recommendations['troops']) > 0 || count($recommendations['spells']) > 0)
                         <div class="space-y-3">
-                            <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Upgrade Pasukan & Mantra</h3>
-                            @foreach(array_merge($recommendations['troops'], $recommendations['spells']) as $rec)
-                                <div class="glass-card p-4 rounded-2xl border-l-4 border-l-amber-500 transition-all hover:translate-x-1">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <h4 class="font-bold text-slate-200">{{ $rec['name'] }}</h4>
-                                        <span class="text-[9px] font-black px-2 py-0.5 rounded-lg bg-amber-500/10 text-amber-500">{{ $rec['priority'] ?? 'Penting' }}</span>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] px-1">Pasukan & Mantra</span>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                @foreach(array_merge($recommendations['troops'], $recommendations['spells']) as $rec)
+                                    <div class="glass-card p-3.5 rounded-2xl border-l-[3px] border-l-amber-500 transition-all hover:bg-white/5">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <h4 class="text-xs font-black text-slate-300">{{ $rec['name'] }}</h4>
+                                            <span class="text-[8px] font-bold text-amber-500/80">UP</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-500 leading-snug">{{ $rec['reason'] }}</p>
                                     </div>
-                                    <p class="text-[11px] text-slate-500 leading-relaxed">{{ $rec['reason'] }}</p>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
                     @endif
                 </section>

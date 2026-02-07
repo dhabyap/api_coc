@@ -39,10 +39,10 @@ class UpgradePriorityService
 
         // Define meta rank for epic gear
         $metaEpic = [
-            'Giant Gauntlet' => 'SSS (Wajib)',
-            'Frozen Arrow' => 'SS (Sangat Kuat)',
-            'Fireball' => 'S (Meta Baru)',
-            'Spiky Ball' => 'A (Bagus)',
+            'Giant Gauntlet' => 'SSS',
+            'Frozen Arrow' => 'SS',
+            'Fireball' => 'S',
+            'Spiky Ball' => 'A',
         ];
 
         foreach ($epicGears as $eg) {
@@ -50,7 +50,7 @@ class UpgradePriorityService
                 $priorities[] = [
                     'name' => $eg['name'],
                     'rank' => $metaEpic[$eg['name']] ?? 'S',
-                    'reason' => 'Prioritas tertinggi karena stat pertumbuhan Epic jauh lebih besar dari Common.',
+                    'reason' => 'Prioritas tertinggi untuk stat Hero.',
                     'color' => 'indigo'
                 ];
             }
