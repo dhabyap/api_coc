@@ -237,7 +237,38 @@ class PlayerInsightService
         if ($filtered->isEmpty())
             return ['readinessScore' => 0, 'list' => [], 'airScore' => 0, 'groundScore' => 0];
 
-        $list = $filtered->map(function ($t) use ($th, $airTroops, $groundTroops) {
+        $list = $filtered->map(function ($t) use ($th, $airTroops, $groundTroops, $filtered) {
+            $baseName = $this->maxLevelService->getBaseTroopForSuper($t['name']);
+
+            // User specifically wanted these recognized and showing only MAX/NOT MAX status
+            $specialTroops = ['Root Rider', 'Meteor Golem'];
+            $isSuper = $baseName !== null || in_array($t['name'], $specialTroops);
+
+            if ($isSuper) {
+                if ($baseName) {
+                    $baseTroop = $filtered->firstWhere('name', $baseName);
+                    $level = $baseTroop ? $baseTroop['level'] : $t['level'];
+                    $maxLevel = $baseTroop ? $this->getThMaxLevel('troop', $baseName, $th, $baseTroop['maxLevel']) : $t['maxLevel'];
+                } else {
+                    // It's a special troop like Root Rider
+                    $level = $t['level'];
+                    $maxLevel = $this->getThMaxLevel('troop', $t['name'], $th, $t['maxLevel']);
+                }
+
+                $isMax = $level >= $maxLevel && $maxLevel > 0;
+
+                return [
+                    'name' => $t['name'],
+                    'level' => $level,
+                    'maxLevel' => $maxLevel,
+                    'isMax' => $isMax,
+                    'isSuper' => true, // Triggers hidden levels in UI
+                    'type' => 'super',
+                    'progress' => round(($level / max(1, $maxLevel)) * 100),
+                    'status' => $isMax ? 'MAX' : 'NOT MAX'
+                ];
+            }
+
             $maxLevel = $t['maxLevel'];
             $isMax = $t['level'] >= $maxLevel;
             $type = in_array($t['name'], $airTroops) ? 'air' : (in_array($t['name'], $groundTroops) ? 'ground' : 'other');
@@ -247,6 +278,7 @@ class PlayerInsightService
                 'level' => $t['level'],
                 'maxLevel' => $maxLevel,
                 'isMax' => $isMax,
+                'isSuper' => false,
                 'type' => $type,
                 'progress' => round(($t['level'] / max(1, $maxLevel)) * 100),
                 'status' => $isMax ? 'MAX' : ($t['level'] >= $maxLevel * 0.8 ? 'DEKAT' : 'RENDAH')

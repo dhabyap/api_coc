@@ -60,6 +60,12 @@ class CocMaxLevelService
             'Ice Golem' => [11 => 1, 12 => 5, 13 => 6, 14 => 7, 15 => 8, 16 => 9, 17 => 10, 18 => 10],
             'Headhunter' => [12 => 1, 13 => 3, 14 => 3, 15 => 3, 16 => 3, 17 => 3, 18 => 4],
             'Hog Rider' => [4 => 1, 5 => 2, 6 => 3, 7 => 4, 8 => 5, 9 => 6, 10 => 7, 11 => 8, 12 => 9, 13 => 10, 14 => 11, 15 => 12, 17 => 13, 18 => 14],
+            'Witch' => [9 => 1, 10 => 3, 11 => 4, 12 => 5, 17 => 6],
+            'Lava Hound' => [9 => 1, 10 => 3, 11 => 4, 12 => 5, 13 => 6, 15 => 7, 16 => 8],
+            'Minion' => [7 => 1, 8 => 5, 9 => 6, 10 => 7, 11 => 8, 12 => 9, 13 => 10, 15 => 11, 17 => 12],
+            'Valkyrie' => [8 => 1, 9 => 4, 10 => 5, 11 => 6, 12 => 7, 13 => 8, 14 => 9, 15 => 10],
+            'Bowler' => [10 => 1, 11 => 3, 12 => 4, 13 => 5, 14 => 6, 17 => 7],
+            'Goblin' => [1 => 1, 3 => 2, 5 => 3, 6 => 4, 7 => 5, 8 => 6, 9 => 7, 11 => 8, 14 => 9],
         ];
 
         return $this->resolveFromMap($troops, $name, $th);
@@ -183,21 +189,22 @@ class CocMaxLevelService
     public function getBaseTroopForSuper(string $superTroopName): ?string
     {
         $map = [
-            'Super Barbarian' => 'Barbarian',
-            'Super Archer' => 'Archer',
-            'Super Giant' => 'Giant',
-            'Super Wall Breaker' => 'Wall Breaker',
-            'Sneaky Goblin' => 'Goblin',
-            'Super Miner' => 'Miner',
-            'Rocket Balloon' => 'Balloon',
-            'Inferno Dragon' => 'Baby Dragon',
+            'Super Minion' => 'Minion',
+            'Super Hog Rider' => 'Hog Rider',
+            'Super Wizard' => 'Wizard',
             'Super Valkyrie' => 'Valkyrie',
             'Super Witch' => 'Witch',
             'Ice Hound' => 'Lava Hound',
             'Super Bowler' => 'Bowler',
             'Super Dragon' => 'Dragon',
-            'Super Minion' => 'Minion',
-            'Super Hog Rider' => 'Hog Rider',
+            'Super Miner' => 'Miner',
+            'Rocket Balloon' => 'Balloon',
+            'Inferno Dragon' => 'Baby Dragon',
+            'Super Wall Breaker' => 'Wall Breaker',
+            'Sneaky Goblin' => 'Goblin',
+            'Super Barbarian' => 'Barbarian',
+            'Super Archer' => 'Archer',
+            'Super Giant' => 'Giant',
         ];
 
         return $map[$superTroopName] ?? null;

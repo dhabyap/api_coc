@@ -269,16 +269,21 @@
                             <div
                                 class="flex justify-between items-center p-3 rounded-xl {{ $troop['isMax'] ? 'bg-orange-500/10 border-orange-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all hover:bg-slate-900/50">
                                 <span
-                                    class="text-[11px] font-bold {{ $troop['level'] >= $troop['maxLevel'] ? 'text-orange-400' : 'text-slate-400' }}">
+                                    class="text-[11px] font-bold {{ $troop['isMax'] ? 'text-orange-400' : 'text-slate-400' }}">
                                     {{ $troop['name'] }}
-                                    @if($troop['level'] >= $troop['maxLevel'])
+                                    @if($troop['isSuper'])
+                                        <span
+                                            class="ml-1 text-[8px] {{ $troop['isMax'] ? 'bg-orange-500' : 'bg-slate-700' }} text-white px-1 rounded-sm">{{ $troop['isMax'] ? 'MAX' : 'NOT MAX' }}</span>
+                                    @elseif($troop['isMax'])
                                         <span class="ml-1 text-[8px] bg-orange-500 text-white px-1 rounded-sm">MAX</span>
                                     @endif
                                 </span>
-                                <span
-                                    class="text-[10px] font-mono {{ $troop['level'] >= $troop['maxLevel'] ? 'text-orange-500' : 'text-slate-600' }}">
-                                    Lv {{ $troop['level'] }} / {{ $troop['maxLevel'] }}
-                                </span>
+                                @if(!$troop['isSuper'])
+                                    <span
+                                        class="text-[10px] font-mono {{ $troop['isMax'] ? 'text-orange-500' : 'text-slate-600' }}">
+                                        Lv {{ $troop['level'] }} / {{ $troop['maxLevel'] }}
+                                    </span>
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -693,7 +698,8 @@
 
                                 <h3
                                     class="text-6xl md:text-7xl font-black text-white mb-2 tracking-tighter leading-none">
-                                    {{ $player['name'] }}</h3>
+                                    {{ $player['name'] }}
+                                </h3>
                                 <p class="text-orange-500 font-mono text-2xl font-bold tracking-[0.4em] mb-10">
                                     <span class="opacity-30">#</span>{{ $player['tag'] }}
                                 </p>
@@ -703,7 +709,8 @@
                                         <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Town
                                             Hall</p>
                                         <p class="text-4xl font-black text-white italic">TH
-                                            {{ $player['townHallLevel'] }}</p>
+                                            {{ $player['townHallLevel'] }}
+                                        </p>
                                     </div>
                                     <div class="space-y-1">
                                         <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
@@ -855,7 +862,8 @@
                                 </h4>
                                 <div class="flex-grow flex flex-col items-center justify-center text-center">
                                     <div class="text-[2.5rem] font-black text-white leading-none mb-1">
-                                        {{ $insights['cv']['equipment']['score'] }}%</div>
+                                        {{ $insights['cv']['equipment']['score'] }}%
+                                    </div>
                                     <div class="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em]">Total
                                         Gear Progress</div>
 
@@ -917,11 +925,11 @@
             function copyToClipboard(btn) {
                 const url = window.location.href;
                 const originalText = btn.querySelector('span').innerText;
-                
+
                 navigator.clipboard.writeText(url).then(() => {
                     btn.querySelector('span').innerText = 'LINK COPIED!';
                     btn.classList.replace('bg-indigo-600', 'bg-green-600');
-                    
+
                     setTimeout(() => {
                         btn.querySelector('span').innerText = originalText;
                         btn.classList.replace('bg-green-600', 'bg-indigo-600');
@@ -935,18 +943,18 @@
                 const exitBtn = document.getElementById('exit-screenshot-btn');
 
                 if (isScreenshot) {
-                    if(indicator) indicator.classList.remove('hidden');
-                    if(exitBtn) exitBtn.classList.remove('hidden');
+                    if (indicator) indicator.classList.remove('hidden');
+                    if (exitBtn) exitBtn.classList.remove('hidden');
                     document.getElementById('clan-cv').scrollIntoView({ behavior: 'smooth' });
                 } else {
-                    if(indicator) indicator.classList.add('hidden');
-                    if(exitBtn) exitBtn.classList.add('hidden');
+                    if (indicator) indicator.classList.add('hidden');
+                    if (exitBtn) exitBtn.classList.add('hidden');
                 }
             }
         </script>
 
         <!-- Floating Exit Button for Screenshot Mode -->
-        <button id="exit-screenshot-btn" onclick="toggleScreenshotMode()" 
+        <button id="exit-screenshot-btn" onclick="toggleScreenshotMode()"
             class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-orange-600 text-white px-6 py-3 rounded-full font-black text-xs uppercase tracking-[0.2em] shadow-2xl border border-orange-500/50 hover:bg-orange-500 transition-all no-screenshot-btn">
             Exit Screenshot Mode
         </button>
