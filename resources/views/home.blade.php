@@ -12,6 +12,11 @@
             font-family: 'Outfit', sans-serif;
             background-color: #0b0e14;
         }
+        
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 6rem; /* Offset for fixed navbar */
+        }
 
         .glass {
             background: rgba(255, 255, 255, 0.03);
@@ -366,6 +371,27 @@
             };
 
             loadRecentTags();
+
+            // Smooth Scroll for Anchor Links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        e.preventDefault();
+                        const headerOffset = 96; // 6rem ~ 96px
+                        const elementPosition = target.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+                    }
+                });
+            });
         });
 
         // Event Auto-Update System
