@@ -78,7 +78,7 @@ class CocMaxLevelService
             'Healing Spell' => [6 => 4, 7 => 5, 9 => 6, 11 => 7, 12 => 8, 13 => 10, 16 => 11],
             'Rage Spell' => [7 => 4, 9 => 5, 11 => 6, 12 => 6, 16 => 7, 17 => 6, 18 => 6], // Adjusting based on data: Level 6 for TH18 found in search was 6 or 7
             'Jump Spell' => [9 => 2, 10 => 3, 14 => 4, 18 => 5],
-            'Freeze Spell' => [10 => 5, 11 => 6, 12 => 7, 16 => 8],
+            'Freeze Spell' => [10 => 5, 11 => 6, 12 => 7],
             'Invisibility Spell' => [11 => 3, 14 => 4, 18 => 4],
             'Poison Spell' => [9 => 1, 10 => 4, 11 => 5, 13 => 7, 15 => 9, 17 => 11, 18 => 12],
             'Earthquake Spell' => [9 => 1, 10 => 4, 11 => 5, 15 => 5, 18 => 5],
@@ -195,6 +195,7 @@ class CocMaxLevelService
             'Super Valkyrie' => 'Valkyrie',
             'Super Witch' => 'Witch',
             'Ice Hound' => 'Lava Hound',
+            'Super Yeti' => 'Yeti',
             'Super Bowler' => 'Bowler',
             'Super Dragon' => 'Dragon',
             'Super Miner' => 'Miner',
