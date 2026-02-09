@@ -76,7 +76,7 @@ class CocMaxLevelService
         $spells = [
             'Lightning Spell' => [5 => 4, 6 => 5, 7 => 6, 9 => 7, 11 => 8, 12 => 9, 14 => 10, 16 => 11],
             'Healing Spell' => [6 => 4, 7 => 5, 9 => 6, 11 => 7, 12 => 8, 13 => 10, 16 => 11],
-            'Rage Spell' => [7 => 4, 9 => 5, 11 => 6, 12 => 6, 16 => 7, 17 => 6, 18 => 6], // Adjusting based on data: Level 6 for TH18 found in search was 6 or 7
+            'Rage Spell' => [7 => 4, 9 => 5, 11 => 6, 12 => 6, 16 => 7, 17 => 6, 18 => 6],
             'Jump Spell' => [9 => 2, 10 => 3, 14 => 4, 18 => 5],
             'Freeze Spell' => [10 => 5, 11 => 6, 12 => 7],
             'Invisibility Spell' => [11 => 3, 14 => 4, 18 => 4],
@@ -126,13 +126,6 @@ class CocMaxLevelService
 
     private function getEquipmentMax(string $name, int $th): int
     {
-        // Common equipment max depends on Blacksmith level, which depends on TH.
-        // TH16 -> common max 18, epic max 27
-        // TH17 -> common max 18, epic max 27 (usually)
-        // TH18 -> common max 18, epic max 27
-
-        // Actually, equipment max level is more about rarity than TH directly once you have the blacksmith, 
-        // but blacksmith level is capped by TH.
         $thCaps = [
             8 => ['common' => 9, 'epic' => 12],
             9 => ['common' => 12, 'epic' => 15],

@@ -88,6 +88,41 @@
         </div>
     </header>
 
+    <!-- Recurring In-Game Events Section -->
+    <section class="max-w-5xl mx-auto px-6 mb-12">
+        <h2 class="text-sm font-black text-slate-500 uppercase tracking-[0.3em] mb-6">
+            Recurring In-Game Events
+        </h2>
+
+        <div id="events-container" class="grid grid-cols-2 md:grid-cols-5 gap-3">
+            @foreach($events as $event)
+                <div class="stat-card p-4 rounded-xl border border-white/5 text-center">
+                    <div class="mb-2">
+                        @if($event['status'] === 'ACTIVE')
+                            <span
+                                class="inline-block px-2 py-0.5 rounded-md bg-green-500/20 border border-green-500/30 text-green-400 text-[8px] font-black uppercase tracking-wider">
+                                Active
+                            </span>
+                        @else
+                            <span
+                                class="inline-block px-2 py-0.5 rounded-md bg-blue-500/20 border border-blue-500/30 text-blue-400 text-[8px] font-black uppercase tracking-wider">
+                                Upcoming
+                            </span>
+                        @endif
+                    </div>
+                    <h3 class="text-xs font-bold text-white mb-1">{{ $event['name'] }}</h3>
+                    <p class="text-[10px] text-slate-500 font-mono" data-event-key="{{ $event['key'] }}">
+                        {{ $event['countdown'] }}
+                    </p>
+                </div>
+            @endforeach
+        </div>
+
+        <div id="events-error" class="hidden text-center text-slate-600 text-xs py-4">
+            Event data unavailable
+        </div>
+    </section>
+
     <!-- Global Stats -->
     <section class="max-w-5xl mx-auto px-6 mb-16">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -260,6 +295,51 @@
 
             loadRecentTags();
         });
+
+        // Event Auto-Update System
+        (function () {
+            const eventsContainer = document.getElementById('events-container');
+            const eventsError = document.getElementById('events-error');
+            let updateInterval;
+
+            function updateEventCountdowns() {
+                fetch('{{ route("events.summary") }}')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to fetch events');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.events && data.events.length > 0) {
+                            data.events.forEach(event => {
+                                const countdownEl = document.querySelector(`[data-event-key="${event.key}"]`);
+                                if (countdownEl) {
+                                    countdownEl.textContent = event.countdown;
+                                }
+                            });
+
+                            // Hide error, show container
+                            eventsError.classList.add('hidden');
+                            eventsContainer.classList.remove('hidden');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Event update failed:', error);
+                        // Show error only if container is empty
+                        if (!eventsContainer.children.length) {
+                            eventsContainer.classList.add('hidden');
+                            eventsError.classList.remove('hidden');
+                        }
+                    });
+            }
+
+            // Update every 60 seconds
+            updateInterval = setInterval(updateEventCountdowns, 60000);
+
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', () => {
+                if (updateInterval) clearInterval(updateInterval);
+            });
+        })();
     </script>
 </body>
 

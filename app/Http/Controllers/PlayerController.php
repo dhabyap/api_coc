@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\CocPlayerService;
 use App\Services\PlayerInsightService;
 use App\Services\GlobalStatsService;
+use App\Services\CocEventService;
 use Illuminate\Http\Request;
 
 use App\Models\Suggestion;
@@ -14,15 +15,18 @@ class PlayerController extends Controller
     protected CocPlayerService $playerService;
     protected PlayerInsightService $insightService;
     protected GlobalStatsService $globalStatsService;
+    protected CocEventService $eventService;
 
     public function __construct(
         CocPlayerService $playerService,
         PlayerInsightService $insightService,
-        GlobalStatsService $globalStatsService
+        GlobalStatsService $globalStatsService,
+        CocEventService $eventService
     ) {
         $this->playerService = $playerService;
         $this->insightService = $insightService;
         $this->globalStatsService = $globalStatsService;
+        $this->eventService = $eventService;
     }
 
     /**
@@ -31,7 +35,12 @@ class PlayerController extends Controller
     public function home()
     {
         $globalStats = $this->globalStatsService->getGlobalStats();
-        return view('home', ['globalStats' => $globalStats]);
+        $events = $this->eventService->getEventsSummary();
+
+        return view('home', [
+            'globalStats' => $globalStats,
+            'events' => $events
+        ]);
     }
 
     /**
@@ -78,6 +87,16 @@ class PlayerController extends Controller
             'suggestions' => $suggestions,
             'lastFetchedAt' => $result['last_fetched_at'],
             'source' => $result['source'],
+        ]);
+    }
+
+    /**
+     * API endpoint for AJAX event updates.
+     */
+    public function eventsSummary()
+    {
+        return response()->json([
+            'events' => $this->eventService->getEventsSummary()
         ]);
     }
 }
