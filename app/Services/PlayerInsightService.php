@@ -231,7 +231,7 @@ class PlayerInsightService
     private function analyzeTroops(array $troops, int $th): array
     {
         $airTroops = ['Balloon', 'Dragon', 'Baby Dragon', 'Electro Dragon', 'Dragon Rider', 'Minion', 'Lava Hound', 'Ice Hound', 'Inferno Dragon', 'Super Dragon'];
-        $groundTroops = ['Barbarian', 'Archer', 'Giant', 'Goblin', 'Wall Breaker', 'Wizard', 'Healer', 'P.E.K.K.A', 'Golem', 'Valkyrie', 'Hog Rider', 'Bowler', 'Ice Golem', 'Yeti', 'Headhunter', 'Apprentice Warden', 'Root Rider', 'Miner'];
+        $groundTroops = ['Barbarian', 'Archer', 'Giant', 'Goblin', 'Wall Breaker', 'Wizard', 'Healer', 'P.E.K.K.A', 'Golem', 'Valkyrie', 'Hog Rider', 'Bowler', 'Ice Golem', 'Yeti', 'Super Yeti', 'Headhunter', 'Apprentice Warden', 'Root Rider', 'Miner'];
 
         $filtered = collect($troops)->filter(fn($t) => ($t['village'] ?? '') === 'home');
         if ($filtered->isEmpty())
@@ -247,8 +247,15 @@ class PlayerInsightService
             if ($isSuper) {
                 if ($baseName) {
                     $baseTroop = $filtered->firstWhere('name', $baseName);
-                    $level = $baseTroop ? $baseTroop['level'] : $t['level'];
-                    $maxLevel = $baseTroop ? $this->getThMaxLevel('troop', $baseName, $th, $baseTroop['maxLevel']) : $t['maxLevel'];
+                    if ($baseTroop) {
+                        // Base troop found - use its level and calculate max based on TH
+                        $level = $baseTroop['level'];
+                        $maxLevel = $this->getThMaxLevel('troop', $baseName, $th, $baseTroop['maxLevel']);
+                    } else {
+                        // Base troop not found - calculate max level from service
+                        $level = $t['level'];
+                        $maxLevel = $this->getThMaxLevel('troop', $baseName, $th, $t['maxLevel']);
+                    }
                 } else {
                     // It's a special troop like Root Rider
                     $level = $t['level'];
