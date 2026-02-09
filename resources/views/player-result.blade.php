@@ -256,36 +256,130 @@
         <!-- API DATA COLLECTIONS: TROOPS, SPELLS, GEAR, HEROES -->
         <section class="space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Detailed Troops -->
-                <div class="lg:col-span-2 glass-card rounded-3xl p-6 h-[400px] flex flex-col">
-                    <h3
-                        class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                        TROOPS COLLECTION
-                    </h3>
-                    <div
-                        class="flex-grow overflow-y-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 gap-2 content-start">
-                        @foreach($insights['troops']['list'] as $troop)
-                            <div
-                                class="flex justify-between items-center p-3 rounded-xl {{ $troop['isMax'] ? 'bg-orange-500/10 border-orange-500/30' : 'bg-slate-900/30 border-slate-800/30' }} border transition-all hover:bg-slate-900/50">
-                                <span
-                                    class="text-[11px] font-bold {{ $troop['isMax'] ? 'text-orange-400' : 'text-slate-400' }}">
-                                    {{ $troop['name'] }}
-                                    @if($troop['isSuper'])
-                                        <span
-                                            class="ml-1 text-[8px] {{ $troop['isMax'] ? 'bg-orange-500' : 'bg-slate-700' }} text-white px-1 rounded-sm">{{ $troop['isMax'] ? 'MAX' : 'NOT MAX' }}</span>
-                                    @elseif($troop['isMax'])
-                                        <span class="ml-1 text-[8px] bg-orange-500 text-white px-1 rounded-sm">MAX</span>
-                                    @endif
-                                </span>
-                                @if(!$troop['isSuper'])
-                                    <span
-                                        class="text-[10px] font-mono {{ $troop['isMax'] ? 'text-orange-500' : 'text-slate-600' }}">
-                                        Lv {{ $troop['level'] }} / {{ $troop['maxLevel'] }}
-                                    </span>
-                                @endif
+                <!-- Detailed Troops Collection -->
+                <div class="lg:col-span-2 glass-card rounded-3xl p-6 h-[400px] flex flex-col relative overflow-hidden">
+
+                    @php
+                        $petNames = ['L.A.S.S.I', 'Electro Owl', 'Mighty Yak', 'Unicorn', 'Frosty', 'Diggy', 'Poison Lizard', 'Phoenix', 'Spirit Fox'];
+                        $siegeNames = ['Wall Wrecker', 'Battle Blimp', 'Stone Slammer', 'Siege Barracks', 'Log Launcher', 'Flame Flinger', 'Flame Finger', 'Battle Drill'];
+
+                        $allTroops = collect($insights['troops']['list']);
+
+                        $pets = $allTroops->filter(function ($t) use ($petNames) {
+                            return in_array($t['name'], $petNames);
+                        })->values();
+
+                        $sieges = $allTroops->filter(function ($t) use ($siegeNames) {
+                            return in_array($t['name'], $siegeNames);
+                        })->values();
+
+                        $troops = $allTroops->filter(function ($t) use ($petNames, $siegeNames) {
+                            return !in_array($t['name'], $petNames) && !in_array($t['name'], $siegeNames);
+                        })->values();
+                    @endphp
+
+                    <div class="overflow-y-auto custom-scrollbar pr-2 h-full space-y-8">
+
+                        <!-- 1. TROOPS SECTION -->
+                        <div>
+                            <h3
+                                class="sticky top-0 bg-[#0b0e14]/90 backdrop-blur-md z-10 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 border-b border-white/5 mb-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                                TROOPS
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                @foreach($troops as $troop)
+                                    <div
+                                        class="flex justify-between items-center p-3 rounded-xl {{ $troop['isMax'] ? 'bg-orange-500/10 border-orange-500/30' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all hover:bg-slate-900/60 group">
+                                        <div class="flex items-center gap-2">
+                                            <span
+                                                class="text-[11px] font-bold {{ $troop['isMax'] ? 'text-orange-400' : 'text-slate-300' }} group-hover:text-white transition-colors">
+                                                {{ $troop['name'] }}
+                                            </span>
+                                            @if($troop['isSuper'])
+                                                <span
+                                                    class="text-[8px] font-black {{ $troop['isMax'] ? 'bg-orange-500 text-white' : 'bg-slate-700 text-slate-400' }} px-1.5 py-0.5 rounded uppercase tracking-wider">Super</span>
+                                            @endif
+                                        </div>
+
+                                        <div class="flex items-center gap-2">
+                                            @if($troop['isMax'])
+                                                <span
+                                                    class="text-[8px] font-black text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded border border-orange-500/20">MAX</span>
+                                            @else
+                                                @if(!$troop['isSuper'])
+                                                    <span class="text-[10px] font-mono text-slate-500">Lv
+                                                        {{ $troop['level'] }}</span>
+                                                @endif
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
-                        @endforeach
+                        </div>
+
+                        <!-- 2. PETS SECTION -->
+                        @if($pets->isNotEmpty())
+                            <div>
+                                <h3
+                                    class="sticky top-0 bg-[#0b0e14]/90 backdrop-blur-md z-10 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 border-b border-white/5 mb-3">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+                                    PETS
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    @foreach($pets as $pet)
+                                        <div
+                                            class="flex justify-between items-center p-3 rounded-xl {{ $pet['isMax'] ? 'bg-cyan-500/10 border-cyan-500/30' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all hover:bg-slate-900/60 group">
+                                            <span
+                                                class="text-[11px] font-bold {{ $pet['isMax'] ? 'text-cyan-400' : 'text-slate-300' }} group-hover:text-white transition-colors">
+                                                {{ $pet['name'] }}
+                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                @if($pet['isMax'])
+                                                    <span
+                                                        class="text-[8px] font-black text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">MAX</span>
+                                                @endif
+                                                <span
+                                                    class="text-[10px] font-mono {{ $pet['isMax'] ? 'text-cyan-500' : 'text-slate-500' }}">Lv
+                                                    {{ $pet['level'] }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- 3. SIEGE MACHINES SECTION -->
+                        @if($sieges->isNotEmpty())
+                            <div>
+                                <h3
+                                    class="sticky top-0 bg-[#0b0e14]/90 backdrop-blur-md z-10 py-2 text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 border-b border-white/5 mb-3">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                    SIEGE MACHINES
+                                </h3>
+                                <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                                    @foreach($sieges as $siege)
+                                        <div
+                                            class="p-2.5 rounded-xl {{ $siege['isMax'] ? 'bg-slate-700/30 border-slate-500/30' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all hover:bg-slate-800/50 flex flex-col items-center text-center gap-1 group">
+                                            <span
+                                                class="text-[10px] font-bold {{ $siege['isMax'] ? 'text-slate-200' : 'text-slate-400' }} group-hover:text-white truncate w-full">
+                                                {{ $siege['name'] }}
+                                            </span>
+                                            <div class="flex items-center gap-1.5">
+                                                @if($siege['isMax'])
+                                                    <span
+                                                        class="text-[7px] font-black text-slate-300 bg-slate-500/20 px-1 rounded">MAX</span>
+                                                @else
+                                                    <span class="text-[9px] font-mono text-slate-600">Lv
+                                                        {{ $siege['level'] }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
                     </div>
                 </div>
 
