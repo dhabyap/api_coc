@@ -461,91 +461,112 @@
                         @endforeach
                     </div>
                 </div>
-                <!-- Equipment -->
-                <div class="glass-card rounded-3xl p-6 flex flex-col min-h-[300px]">
-                    <h3
-                        class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <!-- Equipment Collection (Grouped by Hero) -->
+                <div class="glass-card rounded-3xl p-6 flex flex-col min-h-[400px] relative overflow-hidden">
+                    <h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                         <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                        COLLECTED GEAR (MAX AT TOP)
+                        HERO EQUIPMENT
                     </h3>
-                    <div class="overflow-y-auto custom-scrollbar pr-2 space-y-6">
-                        <!-- Epic Gear -->
-                        @php $epicGear = collect($insights['equipment']['list'])->where('isEpic', true); @endphp
-                        @if($epicGear->count() > 0)
-                            <div class="space-y-3">
-                                <div class="flex items-center gap-3 px-1">
-                                    <div class="w-2 h-4 bg-indigo-500 rounded-sm"></div>
-                                    <span class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Epic
-                                        Equipment</span>
-                                    <div class="h-px flex-grow bg-gradient-to-r from-indigo-500/20 to-transparent"></div>
-                                </div>
-                                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    @foreach($epicGear as $item)
-                                        <div
-                                            class="relative group p-3 rounded-2xl {{ $item['isMax'] ? 'bg-indigo-500/10 border-indigo-400/30' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all hover:scale-[1.02] hover:bg-slate-900/60">
-                                            @if($item['isMax'])
-                                                <div class="absolute -top-2 -right-1 z-10">
-                                                    <span
-                                                        class="bg-indigo-500 text-[7px] font-black text-white px-2 py-0.5 rounded-full uppercase shadow-[0_0_10px_rgba(99,102,241,0.5)]">MAX</span>
-                                                </div>
-                                            @endif
-                                            <div class="flex flex-col items-center text-center">
-                                                <div
-                                                    class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-2 border border-indigo-500/10">
-                                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                                        <path
-                                                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                                    </svg>
-                                                </div>
-                                                <p
-                                                    class="text-[10px] font-black {{ $item['isMax'] ? 'text-indigo-400' : 'text-slate-300' }} tracking-tight leading-tight mb-1">
-                                                    {{ $item['name'] }}
-                                                </p>
-                                                <div
-                                                    class="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5">
-                                                    <span class="text-[8px] font-mono text-slate-500">Lv
-                                                        {{ $item['level'] }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
+                    
+                    @php
+                        // User Provided Gear Metadata
+                        $gearMeta = [
+                            "Archer Puppet" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_AQ_Archer_Puppet.png", "hero" => "Archer Queen", "rarity" => 1],
+                            "Frozen Arrow" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_AQ_Frozen_Arrow.png", "hero" => "Archer Queen", "rarity" => 2],
+                            "Giant Arrow" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_AQ_Giant_Arrow.png", "hero" => "Archer Queen", "rarity" => 1],
+                            "Healer Puppet" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_AQ_Healer_Puppet.png", "hero" => "Archer Queen", "rarity" => 1],
+                            "Invisibility Vial" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_AQ_Invisibility_Vial.png", "hero" => "Archer Queen", "rarity" => 1],
+                            "Magic Mirror" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_AQ_Magic_Mirror.png", "hero" => "Archer Queen", "rarity" => 2],
+                            "Action Figure" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_AQ_WWEActionFigure.png", "hero" => "Archer Queen", "rarity" => 2],
+                            
+                            "Barbarian Puppet" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_BK_Barbarian_Puppet.png", "hero" => "Barbarian King", "rarity" => 1],
+                            "Earthquake Boots" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_BK_Earthquake_Boots.png", "hero" => "Barbarian King", "rarity" => 1],
+                            "Giant Gauntlet" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_BK_Giant_Gauntlet.png", "hero" => "Barbarian King", "rarity" => 2],
+                            "Rage Vial" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_BK_Rage_Vial.png", "hero" => "Barbarian King", "rarity" => 1],
+                            "Vampstache" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_BK_Vampstache.png", "hero" => "Barbarian King", "rarity" => 1],
+                            "Spiky Ball" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_BK_Spiky_Ball.png", "hero" => "Barbarian King", "rarity" => 2],
+                            "Snake Bracelet" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_BK_Snake_Bracelet.png", "hero" => "Barbarian King", "rarity" => 2],
+                            
+                            "Eternal Tome" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_GW_Eternal_Tome.png", "hero" => "Grand Warden", "rarity" => 1],
+                            "Fireball" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_GW_Fireball.png", "hero" => "Grand Warden", "rarity" => 2],
+                            "Healing Tome" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_GW_Healing_Tome.png", "hero" => "Grand Warden", "rarity" => 1],
+                            "Life Gem" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_GW_Life_Gem.png", "hero" => "Grand Warden", "rarity" => 1],
+                            "Rage Gem" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_GW_Rage_Gem.png", "hero" => "Grand Warden", "rarity" => 1],
+                            "Lavaloon Puppet" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_GW_Lavaloon_Puppet.png", "hero" => "Grand Warden", "rarity" => 2],
+                            
+                            "Dark Orb" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_MP_Dark_Orb.png", "hero" => "Minion Prince", "rarity" => 1],
+                            "Henchmen Puppet" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_MP_Henchman.png", "hero" => "Minion Prince", "rarity" => 1],
+                            "Metal Pants" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_MP_Metal_Pants.png", "hero" => "Minion Prince", "rarity" => 1],
+                            "Noble Iron" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_MP_Noble_Iron.png", "hero" => "Minion Prince", "rarity" => 1],
+                            "Dark Crown" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_MP_Dark_Crown.png", "hero" => "Minion Prince", "rarity" => 2],
+                            
+                            "Haste Vial" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_RC_Haste_Vial.png", "hero" => "Royal Champion", "rarity" => 1],
+                            "Hog Rider Puppet" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_RC_Hog_Rider_Doll.png", "hero" => "Royal Champion", "rarity" => 1],
+                            "Royal Gem" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_RC_Royal_Gem.png", "hero" => "Royal Champion", "rarity" => 1],
+                            "Seeking Shield" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_RC_Seeking_Shield.png", "hero" => "Royal Champion", "rarity" => 1],
+                            "Rocket Spear" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_RC_Rocket_Spear.png", "hero" => "Royal Champion", "rarity" => 2],
+                            "Electro Boots" => ["url" => "https://assets.clashk.ing/home-base/equipment-pics/Hero_Equipment_RC_Electro_Boots.png", "hero" => "Royal Champion", "rarity" => 2],
+                        ];
+                        
+                        $groupedGear = collect($insights['equipment']['list'])->map(function($item) use ($gearMeta) {
+                            $meta = $gearMeta[$item['name']] ?? null;
+                            $item['hero'] = $meta['hero'] ?? 'Unknown';
+                            $item['imgUrl'] = $meta['url'] ?? null;
+                            $item['rarityLevel'] = $meta['rarity'] ?? ($item['isEpic'] ? 2 : 1); // 2=Epic, 1=Common
+                            return $item;
+                        })->groupBy('hero');
+                        
+                        // Sort Order: King, Queen, Warden, RC, Prince, Unknown
+                        $heroOrder = ['Barbarian King', 'Archer Queen', 'Grand Warden', 'Royal Champion', 'Minion Prince', 'Unknown'];
+                    @endphp
 
-                        <!-- Common Gear -->
-                        @php $commonGear = collect($insights['equipment']['list'])->where('isEpic', false); @endphp
-                        @if($commonGear->count() > 0)
-                            <div class="space-y-3">
-                                <div class="flex items-center gap-3 px-1">
-                                    <div class="w-2 h-4 bg-purple-500/50 rounded-sm"></div>
-                                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Common
-                                        Equipment</span>
-                                    <div class="h-px flex-grow bg-gradient-to-r from-slate-800 to-transparent"></div>
-                                </div>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-                                    @foreach($commonGear as $item)
-                                        <div
-                                            class="relative p-2.5 rounded-2xl {{ $item['isMax'] ? 'bg-purple-500/10 border-purple-400/20' : 'bg-slate-900/40 border-slate-800/50' }} border transition-all hover:bg-slate-900/60">
-                                            @if($item['isMax'])
-                                                <div class="absolute -top-1.5 -right-1 z-10">
-                                                    <span
-                                                        class="bg-purple-500/80 text-[6px] font-black text-white px-1.5 py-0.5 rounded-full uppercase">MAX</span>
+                    <div class="overflow-y-auto custom-scrollbar pr-2 h-full space-y-6">
+                        @foreach($heroOrder as $heroName)
+                            @if(isset($groupedGear[$heroName]))
+                                <div>
+                                    <h4 class="sticky top-0 bg-[#0b0e14]/90 backdrop-blur-md z-10 py-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest border-b border-white/5 mb-2">
+                                        {{ $heroName }}
+                                    </h4>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                        @foreach($groupedGear[$heroName]->sortByDesc('rarityLevel')->sortByDesc('level') as $item)
+                                            <div class="relative p-2 rounded-xl border {{ $item['rarityLevel'] == 2 ? 'bg-purple-500/10 border-purple-500/30' : 'bg-slate-900/40 border-slate-800/50' }} transition-all group hover:scale-[1.02]">
+                                                
+                                                <!-- Rarity Indicator -->
+                                                @if($item['rarityLevel'] == 2)
+                                                    <div class="absolute -top-1 -right-1 z-10">
+                                                        <span class="bg-purple-500 text-[6px] font-black text-white px-1.5 py-0.5 rounded-full uppercase shadow-[0_0_8px_rgba(168,85,241,0.5)]">EPIC</span>
+                                                    </div>
+                                                @endif
+                                                
+                                                <div class="flex flex-col items-center gap-2">
+                                                    <!-- Image -->
+                                                    <div class="w-10 h-10 {{ $item['rarityLevel'] == 2 ? 'bg-purple-500/20' : 'bg-slate-700/20' }} rounded-lg p-1 flex items-center justify-center relative overflow-hidden">
+                                                        @if($item['imgUrl'])
+                                                            <img src="{{ $item['imgUrl'] }}" alt="{{ $item['name'] }}" class="w-full h-full object-contain filter drop-shadow-lg">
+                                                        @else
+                                                            <div class="text-[8px] text-slate-500 text-center leading-tight">{{ $item['name'] }}</div>
+                                                        @endif
+                                                    </div>
+                                                    
+                                                    <!-- Info -->
+                                                    <div class="w-full text-center">
+                                                        <div class="text-[9px] font-bold {{ $item['rarityLevel'] == 2 ? 'text-purple-300' : 'text-slate-300' }} truncate w-full mb-0.5">
+                                                            {{ $item['name'] }}
+                                                        </div>
+                                                        <div class="flex items-center justify-center gap-1">
+                                                            @if($item['isMax'])
+                                                                <span class="text-[7px] font-black text-white {{ $item['rarityLevel'] == 2 ? 'bg-purple-500' : 'bg-blue-500' }} px-1 rounded">MAX</span>
+                                                            @endif
+                                                            <span class="text-[8px] font-mono text-slate-500">Lv {{ $item['level'] }}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            @endif
-                                            <p
-                                                class="text-[10px] font-bold {{ $item['isMax'] ? 'text-purple-400' : 'text-slate-400' }} leading-tight mb-1 truncate w-full">
-                                                {{ $item['name'] }}
-                                            </p>
-                                            <div
-                                                class="inline-block bg-black/20 px-2 py-0.5 rounded-full border border-white/5">
-                                                <span class="text-[8px] font-mono text-slate-600">Lv {{ $item['level'] }}</span>
                                             </div>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
+                            @endif
+                        @endforeach
                     </div>
                 </div>
             </div>
