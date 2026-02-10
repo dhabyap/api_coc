@@ -24,3 +24,7 @@ Route::get('/player/{tag}', [PlayerController::class, 'show'])->name('player.sho
 Route::post('/suggestions', [SuggestionController::class, 'store'])->name('suggestions.store');
 
 Route::get('/api/events/summary', [PlayerController::class, 'eventsSummary'])->name('events.summary');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('hero-equipments', App\Http\Controllers\Admin\HeroEquipmentController::class);
+});
