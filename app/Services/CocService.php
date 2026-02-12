@@ -8,12 +8,12 @@ use Illuminate\Http\Client\Response;
 class CocService
 {
     protected string $baseUrl;
-    protected string $token;
+    private string $token;
 
     public function __construct()
     {
-        $this->baseUrl = 'https://api.clashofclans.com/v1';
-        $this->token = env('COC_API_TOKEN');
+        $this->baseUrl = config('services.coc.base_url');
+        $this->token = config('services.coc.token');
     }
 
     /**

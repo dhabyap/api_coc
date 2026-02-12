@@ -30,5 +30,10 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'coc' => [
+        'token' => env('COC_API_TOKEN'),
+        'base_url' => 'https://api.clashofclans.com/v1',
+    ],
+
 
 ];
